@@ -1181,8 +1181,9 @@
     <div class="student-voice-inner">
       <h2>WHAT MATTERS TO YOU?</h2>
       <p>You know this campus better than anyone. Tell me what you want to see addressed, what issues matter most to you, or what ideas you'd want a Student Senate President to champion. I'm listening.</p>
-      <form name="student-voice" method="POST" data-netlify="true" class="voice-form">
+      <form name="student-voice" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="voice-form">
         <input type="hidden" name="form-name" value="student-voice">
+        <p style="display:none"><label>Don't fill this out: <input name="bot-field"></label></p>
         <div class="form-row">
           <div class="form-group">
             <label for="sv-name">Your Name <span style="font-family:'DM Sans',sans-serif;font-size:0.8rem;letter-spacing:0;color:#888;">(optional)</span></label>
