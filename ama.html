@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AMA: Genesta Cordero for Student Senate President : r/StudentGovernment</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #dae0e6;
+      font-family: -apple-system, BlinkMacSystemFont, 'IBM Plex Sans', 'Segoe UI', Roboto, sans-serif;
+      color: #1c1c1c;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    .reddit-header {
+      background: #ff4500;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .reddit-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    /* Reddit alien SVG logo */
+    .reddit-logo svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    .reddit-wordmark {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.3px;
+      font-family: 'IBMPlexSans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: 4px;
+      margin-left: 4px;
+    }
+
+    .header-nav a {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 6px 10px;
+      border-radius: 20px;
+      transition: background 0.15s;
+    }
+
+    .header-nav a:hover,
+    .header-nav a.active {
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+    }
+
+    .header-right {
+      margin-left: auto;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn-login {
+      background: transparent;
+      border: 1px solid #fff;
+      color: #fff;
+      padding: 5px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .btn-signup {
+      background: #fff;
+      border: 1px solid #fff;
+      color: #ff4500;
+      padding: 5px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* ── PAGE LAYOUT ── */
+    .page-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 24px;
+      display: flex;
+      gap: 24px;
+    }
+
+    /* ── MAIN FEED ── */
+    .main-feed {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* Subreddit banner */
+    .sub-banner {
+      background: linear-gradient(to bottom, #0079d3 0%, #0079d3 80px, #fff 80px);
+      border-radius: 4px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .sub-banner-bg {
+      height: 80px;
+      background: linear-gradient(135deg, #0079d3 0%, #46d160 100%);
+    }
+
+    .sub-info {
+      background: #fff;
+      padding: 0 16px 12px;
+      display: flex;
+      align-items: flex-end;
+      gap: 16px;
+    }
+
+    .sub-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 4px solid #fff;
+      background: #0079d3;
+      margin-top: -28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      flex-shrink: 0;
+    }
+
+    .sub-details h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1c1c1c;
+    }
+
+    .sub-name-pill {
+      font-size: 14px;
+      color: #878a8c;
+    }
+
+    /* ── POST CARD ── */
+    .post-card {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      display: flex;
+      overflow: hidden;
+      transition: border-color 0.1s;
+      cursor: pointer;
+    }
+
+    .post-card:hover {
+      border-color: #898989;
+    }
+
+    /* Vote column */
+    .vote-col {
+      background: #f8f9fa;
+      width: 40px;
+      min-width: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 4px;
+      gap: 4px;
+    }
+
+    .vote-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 2px;
+      color: #878a8c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.1s, color 0.1s;
+    }
+
+    .vote-btn:hover { background: rgba(0,0,0,0.06); }
+    .vote-btn.upvoted { color: #ff4500; }
+
+    .vote-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .vote-count {
+      font-size: 12px;
+      font-weight: 700;
+      color: #1c1c1c;
+      line-height: 1;
+    }
+
+    /* Post content */
+    .post-content {
+      flex: 1;
+      padding: 8px 8px 8px 0;
+      min-width: 0;
+    }
+
+    .post-meta {
+      font-size: 12px;
+      color: #878a8c;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 3px;
+    }
+
+    .post-meta .sub-link {
+      font-weight: 700;
+      color: #1c1c1c;
+      text-decoration: none;
+    }
+    .post-meta .sub-link:hover { text-decoration: underline; }
+
+    .post-meta a {
+      color: #878a8c;
+      text-decoration: none;
+    }
+    .post-meta a:hover { text-decoration: underline; }
+
+    /* Flair */
+    .post-flair {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #ffd7c3;
+      color: #a34000;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 1px 8px;
+      border-radius: 12px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .post-flair .flair-dot {
+      width: 8px;
+      height: 8px;
+      background: #ff4500;
+      border-radius: 1px;
+      flex-shrink: 0;
+    }
+
+    /* Post title */
+    .post-title {
+      font-size: 18px;
+      font-weight: 500;
+      color: #222;
+      line-height: 1.35;
+      margin-bottom: 8px;
+    }
+
+    .post-title a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .post-title a:hover { color: #0079d3; }
+
+    .title-flair {
+      display: inline;
+      vertical-align: middle;
+    }
+
+    /* Post body text */
+    .post-body {
+      font-size: 14px;
+      color: #3c3c3c;
+      line-height: 1.5;
+      margin-bottom: 10px;
+      max-height: 250px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .post-body p { margin-bottom: 8px; }
+    .post-body p:last-child { margin-bottom: 0; }
+
+    /* Action bar */
+    .post-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      padding: 6px 8px;
+      border-radius: 2px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #878a8c;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.1s, color 0.1s;
+      white-space: nowrap;
+    }
+
+    .action-btn:hover {
+      background: rgba(0,0,0,0.06);
+      color: #1c1c1c;
+    }
+
+    .action-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 312px;
+      min-width: 312px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .sidebar-card {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .sidebar-card-header {
+      background: #ff4500;
+      padding: 40px 12px 12px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .sidebar-card-body {
+      padding: 12px;
+    }
+
+    .sidebar-card-body p {
+      font-size: 14px;
+      color: #3c3c3c;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .sidebar-stat {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .stat-block { text-align: center; }
+    .stat-num { font-size: 18px; font-weight: 700; color: #1c1c1c; }
+    .stat-label { font-size: 12px; color: #878a8c; }
+
+    .sidebar-btn {
+      display: block;
+      width: 100%;
+      background: #ff4500;
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .sidebar-btn:hover { background: #e03d00; }
+
+    .sidebar-btn-outline {
+      display: block;
+      width: 100%;
+      background: transparent;
+      color: #0079d3;
+      border: 1px solid #0079d3;
+      border-radius: 20px;
+      padding: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      cursor: pointer;
+      text-decoration: none;
+      margin-top: 8px;
+      transition: background 0.15s;
+    }
+    .sidebar-btn-outline:hover { background: rgba(0,121,211,0.06); }
+
+    /* Sort bar */
+    .sort-bar {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .sort-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 10px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #878a8c;
+      cursor: pointer;
+      border: none;
+      background: none;
+      transition: background 0.1s, color 0.1s;
+    }
+
+    .sort-btn:hover { background: rgba(0,0,0,0.06); color: #1c1c1c; }
+    .sort-btn.active { background: rgba(0,0,0,0.06); color: #0079d3; }
+
+    .sort-btn svg { width: 18px; height: 18px; }
+
+    @media (max-width: 960px) { .sidebar { display: none; } }
+    @media (max-width: 640px) {
+      .page-wrap { padding: 10px 0; }
+      .post-title { font-size: 16px; }
+      .sub-banner { border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="reddit-header">
+  <a href="#" class="reddit-logo">
+    <!-- Reddit Snoo alien SVG -->
+    <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="10" cy="10" r="10" fill="#fff"/>
+      <!-- Body -->
+      <ellipse cx="10" cy="12.5" rx="6" ry="4.5" fill="#ff4500"/>
+      <!-- Head -->
+      <circle cx="10" cy="7.5" r="4" fill="#ff4500"/>
+      <!-- Ears -->
+      <circle cx="6.5" cy="6" r="1.2" fill="#ff4500"/>
+      <circle cx="13.5" cy="6" r="1.2" fill="#ff4500"/>
+      <!-- Eyes -->
+      <circle cx="8.4" cy="7" r="0.9" fill="#fff"/>
+      <circle cx="11.6" cy="7" r="0.9" fill="#fff"/>
+      <circle cx="8.5" cy="7.1" r="0.5" fill="#ff4500"/>
+      <circle cx="11.7" cy="7.1" r="0.5" fill="#ff4500"/>
+      <!-- Smile -->
+      <path d="M 8 9.2 Q 10 10.8 12 9.2" stroke="#fff" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+      <!-- Antenna -->
+      <line x1="10" y1="3.5" x2="10" y2="1.5" stroke="#ff4500" stroke-width="0.8"/>
+      <circle cx="10" cy="1.2" r="0.8" fill="#ff4500"/>
+      <!-- Legs -->
+      <line x1="5.5" y1="15.5" x2="4.5" y2="17.5" stroke="#ff4500" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="14.5" y1="15.5" x2="15.5" y2="17.5" stroke="#ff4500" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+    <span class="reddit-wordmark">reddit</span>
+  </a>
+
+  <nav class="header-nav">
+    <a href="#">Home</a>
+    <a href="#">Popular</a>
+    <a href="#" class="active">r/StudentGovernment</a>
+  </nav>
+
+  <div class="header-right">
+    <a href="#" class="btn-login">Log In</a>
+    <a href="#" class="btn-signup">Sign Up</a>
+  </div>
+</header>
+
+<!-- ── PAGE ── -->
+<div class="page-wrap">
+  <div class="main-feed">
+
+    <!-- Subreddit banner -->
+    <div class="sub-banner">
+      <div class="sub-banner-bg"></div>
+      <div class="sub-info">
+        <div class="sub-icon">🏛️</div>
+        <div class="sub-details">
+          <h1>StudentGovernment</h1>
+          <span class="sub-name-pill">r/StudentGovernment</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sort bar -->
+    <div class="sort-bar">
+      <button class="sort-btn active">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2l2.4 7.4H20l-6.2 4.5 2.4 7.4L10 17l-6.2 4.3 2.4-7.4L0 9.4h7.6z"/></svg>
+        Best
+      </button>
+      <button class="sort-btn">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 1a9 9 0 100 18A9 9 0 0010 1zm.75 4.5v5.25l4.5 2.25-.75 1.5-5.25-2.625V5.5h1.5z"/></svg>
+        New
+      </button>
+      <button class="sort-btn">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 3h14a1 1 0 010 2H3a1 1 0 010-2zm2 4h10a1 1 0 010 2H5a1 1 0 010-2zm2 4h6a1 1 0 010 2H7a1 1 0 010-2z"/></svg>
+        Top
+      </button>
+    </div>
+
+    <!-- ── POST CARD ── -->
+    <div class="post-card">
+
+      <!-- Vote column -->
+      <div class="vote-col">
+        <button class="vote-btn upvoted" aria-label="upvote">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10 2l8 8h-5v8H7v-8H2z"/>
+          </svg>
+        </button>
+        <span class="vote-count">847</span>
+        <button class="vote-btn" aria-label="downvote">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10 18l-8-8h5V2h6v8h5z"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Post content -->
+      <div class="post-content">
+
+        <!-- Meta row -->
+        <div class="post-meta">
+          <a href="#" class="sub-link">r/StudentGovernment</a>
+          <span>•</span>
+          <span>Posted by</span>
+          <a href="#">u/Genesta_4_President</a>
+          <span>•</span>
+          <span>Just now</span>
+          <span>•</span>
+          <a href="#" class="post-flair">
+            <span class="flair-dot"></span>
+            AMA Official
+          </a>
+        </div>
+
+        <!-- Title -->
+        <h2 class="post-title">
+          <a href="#">My name is Genesta and I'm running for Student Senate President at Saint Paul College. AMA!</a>
+        </h2>
+
+        <!-- Body -->
+        <div class="post-body">
+          <p>Hey r/StudentGovernment! My name is <strong>Genesta Cordero</strong> and I'm running for <strong>Student Senate President at Saint Paul College</strong> in Saint Paul, MN. Voting is <strong>March 9–13</strong>.</p>
+          <p>I'm passionate about making SPC feel like a place students actually want to be — better food (including Halal &amp; Kosher options!), free childcare for student parents, transportation supports, expanded tutoring, stronger rights communication, and building real community at a commuter campus.</p>
+          <p>Ask me anything — about my platform, what it's like running for office, campus life, or anything else on your mind. I'll be answering for the next few hours!</p>
+          <p>🗳️ <a href="https://saintpaul.learn.minnstate.edu/d2l/login?_gl=1*10e1a20*_ga*MTc2NTUwOTIyNi4xNjg4MDQ5NTkz*_ga_1J70M0BE89*czE3NzE5MDcwNDkkbzEwMSRnMCR0MTc3MTkwNzA1NyRqNTIkbDAkaDA." target="_blank" rel="noopener">Vote here (MinnState portal) ↗</a> &nbsp;|&nbsp; 🌐 <a href="https://voteforgenesta.com" target="_blank">voteforgenesta.com ↗</a></p>
+        </div>
+
+        <!-- Actions -->
+        <div class="post-actions">
+          <a href="#comments" class="action-btn">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 2h16a1 1 0 011 1v10a1 1 0 01-1 1H6l-4 4V3a1 1 0 011-1z"/></svg>
+            312 Comments
+          </a>
+          <button class="action-btn">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M15 8a3 3 0 00-2.83 2H8.83A3 3 0 106 11.83v.34a3 3 0 102.83 1.83h3.34A3 3 0 1015 12a2.99 2.99 0 00-.83-2.07l.83-.07V8z"/></svg>
+            Share
+          </button>
+          <button class="action-btn">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"/></svg>
+            Save
+          </button>
+          <button class="action-btn">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"/></svg>
+            More
+          </button>
+        </div>
+
+      </div>
+    </div>
+    <!-- end post card -->
+
+  </div>
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-card-header">
+        r/StudentGovernment
+      </div>
+      <div class="sidebar-card-body">
+        <p>A community for student government representatives, candidates, and anyone passionate about campus governance and student advocacy.</p>
+        <div class="sidebar-stat">
+          <div class="stat-block"><div class="stat-num">24.1k</div><div class="stat-label">Members</div></div>
+          <div class="stat-block"><div class="stat-num">142</div><div class="stat-label">Online</div></div>
+        </div>
+        <a href="https://voteforgenesta.com" target="_blank" class="sidebar-btn">Visit Campaign Site</a>
+        <a href="https://saintpaul.learn.minnstate.edu/d2l/login?_gl=1*10e1a20*_ga*MTc2NTUwOTIyNi4xNjg4MDQ5NTkz*_ga_1J70M0BE89*czE3NzE5MDcwNDkkbzEwMSRnMCR0MTc3MTkwNzA1NyRqNTIkbDAkaDA." target="_blank" class="sidebar-btn-outline">Vote Now (Mar 9–13)</a>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+</body>
+</html>
