@@ -370,6 +370,9 @@
     .about-photo img {
       width: 100%;
       max-width: 400px;
+      max-height: 360px;
+      object-fit: cover;
+      object-position: top;
       display: block;
       margin: 0 auto;
       box-shadow: 12px 12px 0 var(--gold);
@@ -405,6 +408,9 @@
       }
       .about-inner {
         grid-template-columns: 1fr 1.2fr;
+      }
+      .about-photo img {
+        max-height: none;
       }
     }
 
@@ -1410,9 +1416,12 @@
     const form = document.querySelector('.voice-form');
     const successDiv = document.getElementById('voiceSuccess');
     const errorMsg = document.getElementById('voiceError');
+    const submitBtn = form.querySelector('.voice-submit');
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       errorMsg.style.display = 'none';
+      submitBtn.textContent = 'SENDING...';
+      submitBtn.disabled = true;
       try {
         const res = await fetch('/', {
           method: 'POST',
@@ -1423,10 +1432,16 @@
           form.style.display = 'none';
           successDiv.style.display = 'block';
         } else {
+          errorMsg.textContent = 'The form couldn\u2019t be submitted right now. Please try again in a moment.';
           errorMsg.style.display = 'block';
+          submitBtn.textContent = 'SUBMIT YOUR VOICE \u2192';
+          submitBtn.disabled = false;
         }
       } catch {
+        errorMsg.textContent = 'Looks like you might be offline. Check your connection and try again.';
         errorMsg.style.display = 'block';
+        submitBtn.textContent = 'SUBMIT YOUR VOICE \u2192';
+        submitBtn.disabled = false;
       }
     });
   </script>
