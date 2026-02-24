@@ -666,6 +666,133 @@
       color: var(--gold);
     }
 
+    /* ---- STUDENT VOICE FORM ---- */
+    .student-voice {
+      background: var(--cream);
+      padding: 4rem 1.5rem;
+      text-align: center;
+    }
+
+    .student-voice-inner {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .student-voice h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3rem);
+      color: var(--purple);
+      letter-spacing: 0.02em;
+      line-height: 1;
+      margin-bottom: 0.75rem;
+    }
+
+    .student-voice > .student-voice-inner > p {
+      font-size: 1.05rem;
+      color: #444;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .voice-form {
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .form-row {
+      display: grid;
+      gap: 1.25rem;
+    }
+
+    @media (min-width: 600px) {
+      .form-row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-group label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.1em;
+      color: var(--purple);
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      padding: 0.75rem 1rem;
+      border: 2px solid #ddd;
+      background: var(--white);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+      resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--purple);
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: #aaa;
+    }
+
+    .voice-submit {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 0.1em;
+      background: var(--purple);
+      color: var(--white);
+      border: none;
+      padding: 0.9rem 2.5rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(107, 47, 160, 0.25);
+      align-self: flex-start;
+    }
+
+    .voice-submit:hover {
+      background: var(--purple-deep);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 30px rgba(107, 47, 160, 0.35);
+    }
+
+    @media (min-width: 768px) {
+      .student-voice {
+        padding: 5rem 3rem;
+      }
+    }
+
+    /* ---- EXTRA DIVIDERS ---- */
+    .divider--cream-to-gold {
+      background: var(--gold);
+    }
+
+    .divider--cream-to-gold::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -5%;
+      right: -5%;
+      height: 100%;
+      background: var(--cream);
+      transform: skewY(-2deg);
+      transform-origin: top left;
+    }
+
     /* ---- UTILITIES ---- */
     .sr-only {
       position: absolute;
@@ -687,6 +814,7 @@
     <ul class="nav-links">
       <li><a href="#about">About</a></li>
       <li><a href="#platform">Platform</a></li>
+      <li><a href="#student-voice">Your Voice</a></li>
       <li><a href="#vote">Vote</a></li>
     </ul>
     <a href="#vote" class="nav-cta">VOTE MAR 9&ndash;13</a>
@@ -718,8 +846,8 @@
       <div class="about-text">
         <h2>WHY I'M <span>RUNNING</span></h2>
         <p>I'm running for Student Senate President because I believe every student deserves meaningful representation in the decisions that shape our academic experience.</p>
-        <p>Right now, too many students feel disconnected from campus governance. That needs to change. I want to bridge that gap through transparent communication, proactive advocacy, and leadership that actually includes you.</p>
-        <p>Effective student government demands active listening, strategic planning, and genuine commitment to our community. I'm ready to show up and do the work.</p>
+        <p>I want to build a Student Senate that students actually feel connected to — one built on transparent communication, proactive advocacy, and leadership that goes out of its way to include every voice on campus.</p>
+        <p>I believe student government works best when it's rooted in active listening, strategic planning, and genuine commitment to our community. I'm ready to show up and do the work.</p>
       </div>
     </div>
   </section>
@@ -800,7 +928,48 @@
   </section>
 
   <!-- DIVIDER -->
-  <div class="divider divider--purple-to-gold" aria-hidden="true"></div>
+  <div class="divider divider--purple-to-cream" aria-hidden="true"></div>
+
+  <!-- STUDENT VOICE FORM -->
+  <section class="student-voice" id="student-voice">
+    <div class="student-voice-inner">
+      <h2>WHAT MATTERS TO YOU?</h2>
+      <p>You know this campus better than anyone. Tell me what you want to see addressed, what issues matter most to you, or what ideas you'd want a Student Senate President to champion. I'm listening.</p>
+      <form name="student-voice" method="POST" data-netlify="true" class="voice-form">
+        <input type="hidden" name="form-name" value="student-voice">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="sv-name">Your Name <span style="font-family:'DM Sans',sans-serif;font-size:0.8rem;letter-spacing:0;color:#888;">(optional)</span></label>
+            <input type="text" id="sv-name" name="name" placeholder="First name or stay anonymous">
+          </div>
+          <div class="form-group">
+            <label for="sv-email">Email <span style="font-family:'DM Sans',sans-serif;font-size:0.8rem;letter-spacing:0;color:#888;">(optional)</span></label>
+            <input type="email" id="sv-email" name="email" placeholder="Only if you'd like a reply">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="sv-topic">What area does this relate to?</label>
+          <select id="sv-topic" name="topic">
+            <option value="">— Choose one (optional) —</option>
+            <option value="food-basic-needs">Food, Nutrition &amp; Basic Needs</option>
+            <option value="student-rights">Student Rights &amp; Protections</option>
+            <option value="academic-support">Academic Support &amp; Tutoring</option>
+            <option value="childcare-transportation">Childcare &amp; Transportation</option>
+            <option value="community-belonging">Community &amp; Belonging</option>
+            <option value="other">Something else</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="sv-message">What do you want me to care about? *</label>
+          <textarea id="sv-message" name="message" rows="5" placeholder="Share an issue, idea, or experience. Every submission is read." required></textarea>
+        </div>
+        <button type="submit" class="voice-submit">SUBMIT YOUR VOICE &rarr;</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- DIVIDER -->
+  <div class="divider divider--cream-to-gold" aria-hidden="true"></div>
 
   <!-- TOWNHALL -->
   <section class="townhall">
@@ -851,6 +1020,7 @@
       <a href="#home">HOME</a>
       <a href="#about">ABOUT</a>
       <a href="#platform">PLATFORM</a>
+      <a href="#student-voice">YOUR VOICE</a>
       <a href="#vote">VOTE</a>
     </div>
   </footer>
