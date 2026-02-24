@@ -770,7 +770,7 @@ function drawCoins() {
 function drawPlayer() {
   const x = G.px;
   const jH = G.jumpH;
-  const y  = G.py - jH;
+  const y  = PY - jH;
   const s  = PZ;
 
   // Squash on land
@@ -781,7 +781,7 @@ function drawPlayer() {
   const sAlpha = Math.max(0.08, 0.5 - jH*0.004);
   const sW = 30*s * (1 - jH*0.004) * squashX;
   ctx.fillStyle = `rgba(0,0,0,${sAlpha})`;
-  ctx.beginPath(); ctx.ellipse(x, G.py+2, sW, 6*s, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(x, PY+2, sW, 6*s, 0, 0, Math.PI*2); ctx.fill();
 
   // Invincible flicker
   if (G.invT > 0 && G.invT % 5 < 2) ctx.globalAlpha = 0.35;

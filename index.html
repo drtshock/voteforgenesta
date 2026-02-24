@@ -1091,6 +1091,204 @@
       transform-origin: top left;
     }
 
+    /* ---- ENDORSEMENTS ---- */
+    .endorsements {
+      background: var(--cream);
+      padding: 4rem 1.5rem;
+    }
+
+    .endorsements-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .endorsements h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3rem);
+      color: var(--purple);
+      letter-spacing: 0.02em;
+      line-height: 1;
+      margin-bottom: 2rem;
+    }
+
+    .endorsement-grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .endorsement-card {
+      background: var(--white);
+      border-left: 4px solid var(--gold);
+      padding: 1.5rem;
+      text-align: left;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .endorsement-card blockquote {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: #444;
+      font-style: italic;
+      margin-bottom: 0.75rem;
+    }
+
+    .endorsement-card cite {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.08em;
+      color: var(--purple);
+      font-style: normal;
+    }
+
+    @media (min-width: 768px) {
+      .endorsements { padding: 5rem 3rem; }
+      .endorsement-grid { grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    /* ---- FIRST 30 DAYS ---- */
+    .first30 {
+      max-width: 700px;
+      margin: 3rem auto 0;
+      text-align: center;
+    }
+
+    .first30 h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      color: var(--gold);
+      letter-spacing: 0.03em;
+      line-height: 1;
+      margin-bottom: 1.5rem;
+    }
+
+    .first30-list {
+      list-style: none;
+      text-align: left;
+    }
+
+    .first30-list li {
+      font-size: 0.95rem;
+      color: var(--text-light);
+      line-height: 1.6;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .first30-list li:last-child { border-bottom: none; }
+
+    .first30-week {
+      font-family: 'Bebas Neue', sans-serif;
+      color: var(--gold);
+      letter-spacing: 0.06em;
+      flex-shrink: 0;
+      min-width: 4.5rem;
+    }
+
+    /* ---- WHY VOTE BOX ---- */
+    .why-vote {
+      background: var(--white);
+      border: 2px solid var(--purple);
+      padding: 1.5rem;
+      max-width: 700px;
+      margin: 0 auto 2rem;
+      text-align: left;
+    }
+
+    .why-vote h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      color: var(--purple);
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .why-vote p {
+      font-size: 0.95rem;
+      color: #444;
+      line-height: 1.6;
+      margin-bottom: 0;
+    }
+
+    /* ---- VOTE STEPS ---- */
+    .vote-steps {
+      max-width: 500px;
+      margin: 1.5rem auto 0;
+      text-align: left;
+      background: var(--white);
+      border: 2px solid #ddd;
+      padding: 1.25rem 1.5rem;
+    }
+
+    .vote-steps h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.08em;
+      color: var(--purple);
+      margin-bottom: 0.5rem;
+    }
+
+    .vote-steps ol {
+      padding-left: 1.25rem;
+    }
+
+    .vote-steps li {
+      font-size: 0.9rem;
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 0.25rem;
+    }
+
+    /* ---- FAQ ---- */
+    .faq {
+      background: linear-gradient(160deg, var(--purple-dark) 0%, #2D0F4E 100%);
+      padding: 4rem 1.5rem;
+    }
+
+    .faq-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .faq h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3rem);
+      color: var(--white);
+      letter-spacing: 0.02em;
+      line-height: 1;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 1.25rem 0;
+    }
+
+    .faq-item:first-of-type {
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .faq-item h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .faq-item p {
+      font-size: 0.95rem;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    @media (min-width: 768px) {
+      .faq { padding: 5rem 3rem; }
+    }
+
     /* ---- ACCESSIBILITY ---- */
     :focus-visible {
       outline: 2px solid var(--gold);
@@ -1152,8 +1350,12 @@
       </div>
       <div class="about-text">
         <h2>WHY I'M <span>RUNNING</span></h2>
+        <!-- TODO: Replace this placeholder paragraph with Genesta's real personal story -->
+        <p><strong style="color:var(--purple);">[TODO — PERSONAL STORY]</strong> I'm a [TODO: first-generation student? parent? transfer student?] from [TODO: neighborhood/background]. When I first arrived at Saint Paul College, [TODO: what was the experience that shaped your perspective? A struggle with food access? Navigating services alone? Feeling invisible on a commuter campus?]. That experience is why I'm running — because no student should have to figure it out alone.</p>
         <p>I'm running for Student Senate President because I believe every student deserves meaningful representation in the decisions that shape our academic experience.</p>
         <p>I want to build a Student Senate that students actually feel connected to — one built on transparent communication, proactive advocacy, and leadership that goes out of its way to include every voice on campus.</p>
+        <!-- TODO: Replace this placeholder credential with a real one -->
+        <p><strong style="color:var(--purple);">[TODO — CREDENTIAL]</strong> As a [TODO: role — e.g., "Student Senate member," "club president," "student org leader"], I've already [TODO: accomplishment — e.g., "attended every Senate meeting this year," "organized the Fall community meal," "connected 30+ students to tutoring resources"]. I know how this institution works, and I'm ready to push it further.</p>
         <p>I believe student government works best when it's rooted in active listening, strategic planning, and genuine commitment to our community. I'm ready to show up and do the work.</p>
       </div>
     </div>
@@ -1216,7 +1418,7 @@
           <li>Transportation supports: free or subsidized rideshare rides</li>
           <li>Gas grants and transit assistance for commuting students</li>
         </ul>
-        <span class="card-tagline">REMOVING BARRIERS TO SHOW UP</span>
+        <span class="card-tagline">GET HERE. STAY HERE.</span>
       </div>
 
       <div class="platform-card">
@@ -1232,16 +1434,51 @@
       </div>
 
     </div>
+
+    <!-- FIRST 30 DAYS -->
+    <div class="first30">
+      <h3>WHAT I'LL DO IN THE FIRST 30 DAYS</h3>
+      <ul class="first30-list">
+        <!-- TODO: Replace these with Genesta's actual first-month plan -->
+        <li><span class="first30-week">WEEK 1</span> Meet with every student org president to hear what their members need from Senate.</li>
+        <li><span class="first30-week">WEEK 2</span> [TODO: e.g., "Launch a campus-wide survey on cafeteria priorities and basic needs gaps."]</li>
+        <li><span class="first30-week">WEEK 3</span> [TODO: e.g., "Present survey findings to the Student Life committee and propose next steps."]</li>
+        <li><span class="first30-week">WEEK 4</span> [TODO: e.g., "Host the first open Senate office hours — any student, any issue, no appointment needed."]</li>
+      </ul>
+    </div>
+
   </section>
 
   <!-- DIVIDER -->
   <div class="divider divider--purple-to-cream" aria-hidden="true"></div>
 
+  <!-- ENDORSEMENTS -->
+  <section class="endorsements">
+    <div class="endorsements-inner">
+      <h2>WHY STUDENTS SUPPORT <span style="color:var(--gold);">GENESTA</span></h2>
+      <div class="endorsement-grid">
+        <!-- TODO: Replace these with real student quotes. Use real first names + programs if possible. -->
+        <div class="endorsement-card">
+          <blockquote>"[TODO — QUOTE 1: e.g., 'As a nursing student and single mom, Genesta's childcare plan is the first time I've felt seen by Student Senate.']"</blockquote>
+          <cite>&mdash; [TODO: First Name], [TODO: Program]</cite>
+        </div>
+        <div class="endorsement-card">
+          <blockquote>"[TODO — QUOTE 2: e.g., 'She actually listens. I told her about the cafeteria situation and she already had a plan. That's the kind of leadership we need.']"</blockquote>
+          <cite>&mdash; [TODO: First Name], [TODO: Program]</cite>
+        </div>
+        <div class="endorsement-card">
+          <blockquote>"[TODO — QUOTE 3: e.g., 'I've never voted in a campus election before. Genesta is the first candidate who made me feel like my vote actually matters.']"</blockquote>
+          <cite>&mdash; [TODO: First Name], [TODO: Program]</cite>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- STUDENT VOICE FORM -->
   <section class="student-voice" id="student-voice">
     <div class="student-voice-inner">
       <h2>WHAT MATTERS TO YOU?</h2>
-      <p>You know this campus better than anyone. Tell me what you want to see addressed, what issues matter most to you, or what ideas you'd want a Student Senate President to champion. I'm listening.</p>
+      <p>You know this campus better than anyone. Tell me what you want to see addressed, what issues matter most to you, or what ideas you'd want a Student Senate President to champion. I'll personally read every response. If you leave your email, I'll write back.</p>
       <form name="student-voice" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="voice-form">
         <input type="hidden" name="form-name" value="student-voice">
         <p style="display:none"><label>Don't fill this out: <input name="bot-field"></label></p>
@@ -1360,7 +1597,16 @@
   <section class="vote" id="vote">
     <div class="vote-inner">
       <h2>MAKE YOUR VOTE COUNT</h2>
-      <p>Together, we can build a Student Senate that truly represents and advocates for all Saint Paul College students.</p>
+
+      <!-- WHY VOTE -->
+      <div class="why-vote">
+        <h3>WHY DOES THIS ELECTION MATTER?</h3>
+        <!-- TODO: Replace [TODO] dollar amount with real student activity fee budget -->
+        <p>Student Senate controls <strong>[TODO: $XX,XXX]</strong> of student activity fees. They decide what events get funded, what food options are available, and who speaks for you to administration. If you've ever complained about something on campus, this is how you change it.</p>
+      </div>
+
+      <!-- TODO: Replace [TODO] student count with actual SPC enrollment -->
+      <p><strong>5 days to decide who represents [TODO: X,XXX] students.</strong> After March 13, this is decided &mdash; with or without your vote. Don't sit this one out.</p>
 
       <div class="vote-dates">
         <div class="vote-date-card">
@@ -1381,6 +1627,54 @@
       </div>
 
       <a href="https://saintpaul.learn.minnstate.edu/d2l/login?_gl=1*10e1a20*_ga*MTc2NTUwOTIyNi4xNjg4MDQ5NTkz*_ga_1J70M0BE89*czE3NzE5MDcwNDkkbzEwMSRnMCR0MTc3MTkwNzA1NyRqNTIkbDAkaDA." class="vote-cta" target="_blank" rel="noopener noreferrer">VOTE GENESTA CORDERO &rarr;</a>
+
+      <!-- HOW TO VOTE -->
+      <div class="vote-steps">
+        <h3>HOW TO VOTE</h3>
+        <!-- TODO: Verify these steps match the actual D2L voting flow -->
+        <ol>
+          <li>Click the button above to log in to D2L (your MinnState student portal).</li>
+          <li>[TODO: e.g., "Navigate to the Student Senate Election survey on your D2L dashboard."]</li>
+          <li>Select your candidates and submit your ballot. That's it!</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIVIDER -->
+  <div class="divider divider--cream-to-purple" aria-hidden="true"></div>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <div class="faq-inner">
+      <h2>QUESTIONS? ANSWERS.</h2>
+
+      <div class="faq-item">
+        <h3>CAN STUDENT SENATE ACTUALLY CHANGE THE FOOD?</h3>
+        <!-- TODO: Verify this answer reflects SPC's actual governance structure -->
+        <p>Yes. Student Senate has a direct advisory role to administration on student services, including dining. Senate recommendations on menu changes and vendor contracts carry real weight — especially when backed by student survey data, which I plan to collect in my first month.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>WHAT'S THE DIFFERENCE BETWEEN SENATE PRESIDENT AND OTHER SENATE ROLES?</h3>
+        <!-- TODO: Verify this matches SPC's Senate constitution -->
+        <p>The President sets the agenda, runs meetings, represents the student body to college administration, and serves on [TODO: e.g., "the President's Cabinet and shared governance committees"]. It's the primary voice between students and the people who make institutional decisions.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>I'VE NEVER VOTED IN A CAMPUS ELECTION. DOES MY VOTE MATTER?</h3>
+        <p>Student Senate elections are often decided by a few dozen votes. Your single vote has more impact here than in almost any other election you'll participate in. This is the closest thing to direct democracy you'll experience — use it.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>HOW DO I KNOW THESE PROMISES ARE REALISTIC?</h3>
+        <p>Every item on my platform maps to something Student Senate has the authority to influence — through committee recommendations, budget allocation, or direct advocacy to administration. I'm not promising to build a new building. I'm promising to show up to every meeting, bring real data, and push until something moves.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>I DON'T KNOW ANYTHING ABOUT STUDENT GOVERNMENT. IS THAT OK?</h3>
+        <p>That's exactly who I'm building this campaign for. Student government works best when every student feels like it belongs to them — not just the students who already know how it works. Start here: <a href="#platform" style="color:var(--gold);">read the platform</a>, come to the <a href="#" style="color:var(--gold);">townhall on March 4</a>, and vote March 9&ndash;13.</p>
+      </div>
     </div>
   </section>
 
