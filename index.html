@@ -900,6 +900,117 @@
       .bingo-promo { padding: 4rem 3rem; }
     }
 
+    /* ---- GAMES GRID ---- */
+    .games-grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+      .games-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .game-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      padding: 1.75rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .game-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-3px);
+    }
+
+    .game-card-preview {
+      display: flex;
+      justify-content: center;
+    }
+
+    .game-card-tag {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      margin-bottom: 0.4rem;
+    }
+
+    .game-card-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      color: var(--white);
+      letter-spacing: 0.03em;
+      line-height: 1;
+      margin-bottom: 0.75rem;
+    }
+
+    .game-card-desc {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.6;
+      margin-bottom: 1.25rem;
+      max-width: none;
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    /* Hall Runner preview graphic */
+    .runner-preview {
+      width: 160px;
+      height: 110px;
+      background: #0a0118;
+      border: 2px solid rgba(255,184,0,0.3);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .runner-corridor {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .runner-floor {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 45%;
+      background: linear-gradient(to bottom, #1e0840, #0d0118);
+      clip-path: polygon(25% 0%, 75% 0%, 100% 100%, 0% 100%);
+    }
+
+    .runner-obs {
+      position: absolute;
+      background: rgba(107,47,160,0.8);
+      border: 1px solid rgba(255,184,0,0.4);
+      border-radius: 2px;
+    }
+
+    .obs-1 {
+      width: 14px; height: 22px;
+      bottom: 44%; left: 35%;
+      transform: scale(0.5);
+    }
+
+    .obs-2 {
+      width: 18px; height: 28px;
+      bottom: 44%; right: 30%;
+      transform: scale(0.75);
+    }
+
+    .runner-player {
+      position: absolute;
+      bottom: 42%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 28px;
+      line-height: 1;
+    }
+
     /* ---- EXTRA DIVIDERS ---- */
     .divider--cream-to-gold {
       background: var(--gold);
@@ -1108,31 +1219,58 @@
   <!-- DIVIDER -->
   <div class="divider divider--gold-to-purple" aria-hidden="true"></div>
 
-  <!-- BINGO PROMO -->
+  <!-- GAMES PROMO -->
   <section class="bingo-promo">
-    <div class="bingo-promo-inner">
-      <div class="bingo-promo-text">
-        <p class="bingo-promo-eyebrow">FOR FUN &bull; FREE &bull; NO SIGN-UP</p>
-        <h2>CAMPUS MINI-GAMES</h2>
-        <p>Two free games built around SPC — play between classes, share with friends, no account needed.</p>
-        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center;">
-          <a href="/hallrunner.html" class="bingo-promo-btn">🏃 HALL RUNNER &rarr;</a>
-          <a href="/bingo.html" class="bingo-promo-btn" style="background:transparent;border:2px solid var(--gold);color:var(--gold);">🎯 CAMPUS BINGO &rarr;</a>
-        </div>
-      </div>
-      <div class="bingo-promo-preview" aria-hidden="true">
-        <div class="mini-card">
-          <div class="mini-header">
-            <span>B</span><span>I</span><span>N</span><span>G</span><span>O</span>
+    <div style="max-width:1100px;margin:0 auto;">
+      <p class="bingo-promo-eyebrow" style="text-align:center;margin-bottom:0.5rem;">FOR FUN &bull; FREE &bull; NO SIGN-UP</p>
+      <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,6vw,3.2rem);color:var(--white);letter-spacing:0.03em;line-height:1;text-align:center;margin-bottom:2rem;">CAMPUS MINI-GAMES</h2>
+
+      <div class="games-grid">
+
+        <!-- Bingo -->
+        <div class="game-card">
+          <div class="game-card-preview" aria-hidden="true">
+            <div class="mini-card">
+              <div class="mini-header">
+                <span>B</span><span>I</span><span>N</span><span>G</span><span>O</span>
+              </div>
+              <div class="mini-grid">
+                <div class="mc marked"></div><div class="mc"></div><div class="mc marked"></div><div class="mc"></div><div class="mc marked"></div>
+                <div class="mc"></div><div class="mc marked"></div><div class="mc"></div><div class="mc"></div><div class="mc marked"></div>
+                <div class="mc marked"></div><div class="mc"></div><div class="mc free"></div><div class="mc"></div><div class="mc marked"></div>
+                <div class="mc"></div><div class="mc marked"></div><div class="mc"></div><div class="mc marked"></div><div class="mc"></div>
+                <div class="mc winning"></div><div class="mc winning"></div><div class="mc winning"></div><div class="mc winning"></div><div class="mc winning"></div>
+              </div>
+            </div>
           </div>
-          <div class="mini-grid">
-            <div class="mc marked"></div><div class="mc"></div><div class="mc marked"></div><div class="mc"></div><div class="mc marked"></div>
-            <div class="mc"></div><div class="mc marked"></div><div class="mc"></div><div class="mc"></div><div class="mc marked"></div>
-            <div class="mc marked"></div><div class="mc"></div><div class="mc free"></div><div class="mc"></div><div class="mc marked"></div>
-            <div class="mc"></div><div class="mc marked"></div><div class="mc"></div><div class="mc marked"></div><div class="mc"></div>
-            <div class="mc winning"></div><div class="mc winning"></div><div class="mc winning"></div><div class="mc winning"></div><div class="mc winning"></div>
+          <div class="game-card-text">
+            <p class="game-card-tag">EXPLORE CAMPUS</p>
+            <h3 class="game-card-title">CAMPUS BINGO</h3>
+            <p class="game-card-desc">25 real SPC challenges on a random card. Check off squares as you explore — get five in a row and win. Perfect between classes.</p>
+            <a href="/bingo.html" class="bingo-promo-btn">🎯 PLAY CAMPUS BINGO &rarr;</a>
           </div>
         </div>
+
+        <!-- Hall Runner -->
+        <div class="game-card">
+          <div class="game-card-preview" aria-hidden="true">
+            <div class="runner-preview">
+              <div class="runner-corridor">
+                <div class="runner-floor"></div>
+                <div class="runner-obs obs-1"></div>
+                <div class="runner-obs obs-2"></div>
+                <div class="runner-player">🏃</div>
+              </div>
+            </div>
+          </div>
+          <div class="game-card-text">
+            <p class="game-card-tag">ENDLESS RUNNER</p>
+            <h3 class="game-card-title">SPC HALL RUNNER</h3>
+            <p class="game-card-desc">Run through the hallways of Saint Paul College! Dodge carts, professors, and wet floor signs. How far can you get before you get busted?</p>
+            <a href="/hallrunner.html" class="bingo-promo-btn">🏃 PLAY HALL RUNNER &rarr;</a>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
