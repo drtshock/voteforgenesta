@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>SPC Hall Runner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%; height: 100%;
+      background: #0a0118;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      overflow: hidden; touch-action: none;
+      font-family: 'DM Sans', sans-serif;
+    }
+    canvas { display: block; image-rendering: pixelated; }
+    #ui {
+      position: absolute; top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 400px; pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+'use strict';
+// ═══════════════════════════════════════
+//  SPC HALL RUNNER  —  Campus Endless Runner
+// ═══════════════════════════════════════
+
+const C = document.getElementById('c');
+const ctx = C.getContext('2d');
+const W = 400, H = 650;
+C.width = W; C.height = H;
+
+function resize() {
+  const s = Math.min(window.innerWidth / W, window.innerHeight / H);
+  C.style.width  = W * s + 'px';
+  C.style.height = H * s + 'px';
+}
+window.addEventListener('resize', resize); resize();
+
+// ── Perspective constants ──
+const VPX = 200, VPY = 168;   // vanishing point
+const FLY = 590;               // floor y (near)
+const CLY = 55;                // ceiling y (near)
+const NX = [112, 200, 288];   // lane x at player (near)
+const PZ = 0.86;               // player z-depth
+const PY = VPY + (FLY - VPY) * PZ;  // player y ≈ 527
+
+function wx(lane, z) { return VPX + (NX[lane] - VPX) * z; }
+function wy(z)       { return VPY + (FLY - VPY) * z; }
+function wscale(z)   { return z; }
+
+// ── Colors ──
+const COL = {
+  bg:     '#0a0118',
+  wall:   '#160330',
+  wallDk: '#08010e',
+  floor:  '#120225',
+  purple: '#6B2FA0',
+  purpleDk: '#1A0535',
+  purpleMd: '#3a1270',
+  gold:   '#FFB800',
+  goldLt: '#FFD54F',
+  white:  '#ffffff',
+  red:    '#e53935',
+  green:  '#43a047',
+};
+
+// ── Game state ──
+let appState = 'title'; // 'title' | 'game' | 'over'
+let G = {};
+let hiScore = +localStorage.getItem('spc_hi') || 0;
+let endScore = 0;
+
+function newGame() {
+  G = {
+    frame:   0,
+    score:   0,
+    lives:   3,
+    speed:   2.4,
+    spawnCD: 0,
+    obs:     [],
+    coins:   [],
+    parts:   [],
+    // player
+    lane:    1,
+    tLane:   1,
+    px:      NX[1],
+    py:      PY,
+    // jump
+    jumping: false,
+    jumpT:   0,
+    jumpH:   0,
+    // slide
+    sliding: false,
+    slideT:  0,
+    // state
+    invT:    0,
+    hitFlash:0,
+    shake:   0,
+    // bg
+    bgScroll:0,
+    // location sign
+    locIdx:  0,
+    locTimer:0,
+    locShow: 0,
+  };
+  appState = 'game';
+}
+
+// ── Campus locations ──
+const LOCS = [
+  'MAIN ENTRANCE','1ST FLOOR · HALLWAY A','ADMISSIONS OFFICE',
+  'LEARNING COMMONS','CITY VIEW CAFÉ ☕','COFFEE SHOP','LIBRARY — RM 1262 📚',
+  '2ND FLOOR','STUDENT SERVICES','ADVISING CENTER','FINANCIAL AID',
+  '3RD FLOOR','FITNESS LAB 💪','HEALTH & SCIENCE CENTER',
+  'SIMULATION CENTER','COMPUTER LAB','4TH FLOOR',
+  'MANUFACTURING LAB','CULINARY ARTS','LOWER LEVEL','PUBLIC SAFETY 🔒',
+];
+
+// ── Obstacle types ──
+// kind: 'block' = must switch lane  |  'low' = must jump over
+const ODEFS = [
+  { kind:'block', label:'CART',      emoji:'🛒', col:'#6d4c41', w:56, h:72  },
+  { kind:'block', label:'PROF',      emoji:'👨‍🏫', col:'#1565c0', w:38, h:95  },
+  { kind:'block', label:'LOCKER',    emoji:'🔒', col:'#4a1a75', w:50, h:100 },
+  { kind:'block', label:'DESK',      emoji:'🖥️', col:'#546e7a', w:64, h:58  },
+  { kind:'block', label:'VENDING',   emoji:'🥤', col:'#2e7d32', w:52, h:105 },
+  { kind:'block', label:'JANITOR',   emoji:'🧹', col:'#bf360c', w:36, h:90  },
+  { kind:'low',   label:'BACKPACK',  emoji:'🎒', col:'#e65100', w:52, h:34  },
+  { kind:'low',   label:'WET FLOOR', emoji:'⚠️', col:'#f9a825', w:46, h:26  },
+  { kind:'low',   label:'CHAIR',     emoji:'🪑', col:'#4e342e', w:50, h:38  },
+  { kind:'low',   label:'BOOKS',     emoji:'📚', col:'#6b2fa0', w:54, h:32  },
+];
+
+// ── Collectible types ──
+const CDEFS = [
+  { emoji:'☕', pts:50, col:'#6d4c41' },
+  { emoji:'⭐', pts:10, col:'#FFB800' },
+  { emoji:'📖', pts:25, col:'#6b2fa0' },
+];
+
+// ── Input ──
+const keys = new Set();
+let prevKeys = new Set();
+document.addEventListener('keydown', e => { keys.add(e.code); e.preventDefault(); });
+document.addEventListener('keyup',   e => keys.delete(e.code));
+function justPressed(k) { return keys.has(k) && !prevKeys.has(k); }
+
+let swipe = null;
+let tx0 = 0, ty0 = 0;
+C.addEventListener('touchstart', e => {
+  tx0 = e.touches[0].clientX; ty0 = e.touches[0].clientY;
+  e.preventDefault();
+}, { passive: false });
+C.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - tx0;
+  const dy = e.changedTouches[0].clientY - ty0;
+  if (Math.abs(dx) > 25 || Math.abs(dy) > 25)
+    swipe = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'R' : 'L') : (dy < 0 ? 'U' : 'D');
+  else swipe = 'tap';
+  e.preventDefault();
+}, { passive: false });
+C.addEventListener('click', () => { swipe = 'tap'; });
+
+// ── Audio ──
+let aud;
+try { aud = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+function sfx(freq, dur, vol=0.08, type='square') {
+  if (!aud) return;
+  try {
+    if (aud.state === 'suspended') aud.resume();
+    const o = aud.createOscillator(), g = aud.createGain();
+    o.connect(g); g.connect(aud.destination);
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, aud.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, aud.currentTime + dur);
+    o.start(); o.stop(aud.currentTime + dur);
+  } catch(e) {}
+}
+const SFX = {
+  jump:    () => sfx(500, 0.12, 0.06, 'sine'),
+  switch:  () => sfx(350, 0.07, 0.04, 'sine'),
+  coin:    () => sfx(900, 0.09, 0.07, 'sine'),
+  hit:     () => { sfx(120, 0.25, 0.12, 'sawtooth'); sfx(80, 0.35, 0.1, 'square'); },
+  die:     () => { sfx(200, 0.1, 0.1); sfx(150, 0.1, 0.1); sfx(100, 0.3, 0.1); },
+  start:   () => { sfx(440, 0.1, 0.07, 'sine'); sfx(660, 0.15, 0.07, 'sine'); },
+  bingo:   () => { sfx(523, 0.1); sfx(659, 0.1); sfx(784, 0.2); },
+};
+
+// ── Particles ──
+function spawnParts(x, y, col, n=8) {
+  for (let i = 0; i < n; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const spd = 2 + Math.random() * 4;
+    G.parts.push({ x, y, vx: Math.cos(a)*spd, vy: Math.sin(a)*spd-2, col, life:1, size: 3+Math.random()*4 });
+  }
+}
+
+// ── Spawn obstacles ──
+function spawnObs() {
+  const def = ODEFS[Math.floor(Math.random() * ODEFS.length)];
+  const lane = Math.floor(Math.random() * 3);
+  // Make sure no existing obstacle in same lane at far distance
+  const tooClose = G.obs.some(o => o.lane === lane && o.z < 0.25);
+  if (tooClose) return;
+  G.obs.push({ ...def, lane, z: 0.05 });
+}
+
+function spawnCoin() {
+  const def = CDEFS[Math.floor(Math.random() * CDEFS.length)];
+  const lane = Math.floor(Math.random() * 3);
+  G.coins.push({ ...def, lane, z: 0.08 });
+}
+
+// ── Update ──
+function update() {
+  prevKeys = new Set(keys);
+  const { frame } = G;
+
+  // ── Input → actions ──
+  const goLeft  = justPressed('ArrowLeft')  || justPressed('KeyA') || swipe === 'L';
+  const goRight = justPressed('ArrowRight') || justPressed('KeyD') || swipe === 'R';
+  const goJump  = justPressed('ArrowUp')    || justPressed('KeyW') || justPressed('Space') || swipe === 'U';
+  swipe = null;
+
+  // ── Lane switch ──
+  if (goLeft  && G.tLane > 0) { G.tLane--; SFX.switch(); }
+  if (goRight && G.tLane < 2) { G.tLane++; SFX.switch(); }
+  G.px += (NX[G.tLane] - G.px) * 0.18;
+  G.lane = G.tLane;
+
+  // ── Jump ──
+  if (goJump && !G.jumping && !G.sliding) {
+    G.jumping = true; G.jumpT = 0; SFX.jump();
+  }
+  if (G.jumping) {
+    G.jumpT += 0.055;
+    G.jumpH = Math.sin(G.jumpT * Math.PI) * 90;
+    if (G.jumpT >= 1) { G.jumping = false; G.jumpH = 0; }
+  }
+
+  // ── Slide (not used as control but reserved) ──
+
+  // ── Speed ramp ──
+  G.speed = 2.4 + G.frame * 0.00045;
+  if (G.speed > 9) G.speed = 9;
+
+  // ── Background scroll ──
+  G.bgScroll += G.speed;
+  G.score = Math.floor(G.frame * 0.12 + G.score * 0);
+  // Actually just track score separately
+  G.score = Math.floor(G.frame * 0.15);
+
+  // ── Location sign ──
+  G.locTimer += G.speed;
+  if (G.locTimer > 900) {
+    G.locTimer = 0;
+    G.locIdx = (G.locIdx + 1) % LOCS.length;
+    G.locShow = 120;
+  }
+  if (G.locShow > 0) G.locShow--;
+
+  // ── Spawn obstacles ──
+  G.spawnCD -= 1;
+  if (G.spawnCD <= 0) {
+    spawnObs();
+    if (Math.random() < 0.45) spawnCoin();
+    // Interval: gets shorter as speed increases
+    G.spawnCD = Math.max(35, 90 - G.speed * 7);
+    // Occasionally spawn two obstacles in different lanes
+    if (G.speed > 5 && Math.random() < 0.3) {
+      G.spawnCD += 15;
+      setTimeout(() => { if (appState === 'game') spawnObs(); }, 300);
+    }
+  }
+
+  // ── Move obstacles ──
+  const zStep = G.speed * 0.003;
+  G.invT = Math.max(0, G.invT - 1);
+  G.hitFlash = Math.max(0, G.hitFlash - 1);
+  G.shake = Math.max(0, G.shake - 1);
+
+  for (let i = G.obs.length - 1; i >= 0; i--) {
+    const o = G.obs[i];
+    o.z += zStep;
+
+    // Collision check: when obstacle reaches player z range
+    if (o.z >= PZ - 0.04 && o.z <= PZ + 0.08) {
+      const sameLane = o.lane === G.lane;
+      let hit = false;
+      if (sameLane) {
+        if (o.kind === 'block') {
+          hit = true; // must switch lane
+        } else if (o.kind === 'low') {
+          hit = G.jumpH < 30; // must jump
+        }
+      }
+      if (hit && G.invT === 0) {
+        G.lives--;
+        G.invT = 90;
+        G.hitFlash = 20;
+        G.shake = 15;
+        SFX.hit();
+        spawnParts(G.px, G.py - G.jumpH, COL.red, 12);
+        if (G.lives <= 0) {
+          endScore = G.score;
+          if (G.score > hiScore) { hiScore = G.score; localStorage.setItem('spc_hi', hiScore); }
+          SFX.die();
+          setTimeout(() => { appState = 'over'; }, 600);
+        }
+      }
+    }
+    if (o.z > 1.15) G.obs.splice(i, 1);
+  }
+
+  // ── Move coins ──
+  for (let i = G.coins.length - 1; i >= 0; i--) {
+    const co = G.coins[i];
+    co.z += zStep;
+    if (co.z >= PZ - 0.06 && co.z <= PZ + 0.06 && co.lane === G.lane) {
+      G.score += co.pts;
+      spawnParts(wx(co.lane, co.z), wy(co.z), COL.gold, 6);
+      SFX.coin();
+      G.coins.splice(i, 1);
+    } else if (co.z > 1.1) {
+      G.coins.splice(i, 1);
+    }
+  }
+
+  // ── Particles ──
+  for (let i = G.parts.length - 1; i >= 0; i--) {
+    const p = G.parts[i];
+    p.x += p.vx; p.y += p.vy; p.vy += 0.3; p.life -= 0.04;
+    if (p.life <= 0) G.parts.splice(i, 1);
+  }
+
+  G.frame++;
+}
+
+// ══════════════════════════════════
+//  DRAW
+// ══════════════════════════════════
+function draw() {
+  // ── Screen shake ──
+  ctx.save();
+  if (G.shake > 0) {
+    ctx.translate((Math.random()-0.5)*G.shake*0.6, (Math.random()-0.5)*G.shake*0.4);
+  }
+
+  drawHallway();
+  drawCoins();
+  drawObstacles();
+  drawPlayer();
+  drawParticles();
+  drawHUD();
+
+  // ── Hit flash ──
+  if (G.hitFlash > 0) {
+    ctx.fillStyle = `rgba(220,30,30,${G.hitFlash / 40})`;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  // ── Invincible shimmer ──
+  if (G.invT > 0 && G.invT % 4 < 2) {
+    ctx.fillStyle = 'rgba(255,184,0,0.05)';
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  ctx.restore();
+}
+
+function drawHallway() {
+  // ── BG ──
+  ctx.fillStyle = COL.bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // ── FAR WALL ──
+  const fw = 120, fh = 100;
+  const fl = VPX - fw/2, fr = VPX + fw/2;
+  const ft = VPY - fh/2, fb = VPY + fh/2;
+  ctx.fillStyle = COL.purpleMd;
+  ctx.fillRect(fl, ft, fw, fh);
+  // Center glow
+  const glow = ctx.createRadialGradient(VPX, VPY, 0, VPX, VPY, 130);
+  glow.addColorStop(0, 'rgba(107,47,160,0.5)');
+  glow.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(VPX-130, VPY-130, 260, 260);
+
+  // ── CEILING ──
+  ctx.beginPath();
+  ctx.moveTo(-5, CLY);
+  ctx.lineTo(fl, ft);
+  ctx.lineTo(fr, ft);
+  ctx.lineTo(W+5, CLY);
+  ctx.closePath();
+  const cg = ctx.createLinearGradient(0, CLY, 0, VPY);
+  cg.addColorStop(0, '#060010');
+  cg.addColorStop(1, '#1a0535');
+  ctx.fillStyle = cg;
+  ctx.fill();
+
+  // Ceiling light strips
+  drawCeilingLights(fl, fr, ft);
+
+  // ── FLOOR ──
+  ctx.beginPath();
+  ctx.moveTo(-5, FLY);
+  ctx.lineTo(fl, fb);
+  ctx.lineTo(fr, fb);
+  ctx.lineTo(W+5, FLY);
+  ctx.closePath();
+  const fg = ctx.createLinearGradient(0, VPY, 0, FLY);
+  fg.addColorStop(0, '#1e0840');
+  fg.addColorStop(0.6, '#130228');
+  fg.addColorStop(1, '#0d0118');
+  ctx.fillStyle = fg;
+  ctx.fill();
+
+  // Floor tiles (scrolling grid)
+  drawFloorGrid(fl, fb, fr, FLY);
+
+  // Floor lane lines (from VP to bottom)
+  const laneEdgesFar  = [fl, fl+(fr-fl)/3, fl+2*(fr-fl)/3, fr];
+  const laneEdgesNear = [-5, W/3, 2*W/3, W+5];
+  laneEdgesFar.forEach((lx, i) => {
+    ctx.beginPath();
+    ctx.moveTo(lx, fb);
+    ctx.lineTo(laneEdgesNear[i], FLY);
+    ctx.strokeStyle = 'rgba(255,184,0,0.18)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+
+  // ── LEFT WALL ──
+  ctx.beginPath();
+  ctx.moveTo(-5, CLY); ctx.lineTo(fl, ft);
+  ctx.lineTo(fl, fb);  ctx.lineTo(-5, FLY);
+  ctx.closePath();
+  const lw = ctx.createLinearGradient(0, 0, fl, 0);
+  lw.addColorStop(0, '#050012');
+  lw.addColorStop(1, '#1a0535');
+  ctx.fillStyle = lw;
+  ctx.fill();
+
+  // ── RIGHT WALL ──
+  ctx.beginPath();
+  ctx.moveTo(W+5, CLY); ctx.lineTo(fr, ft);
+  ctx.lineTo(fr, fb);   ctx.lineTo(W+5, FLY);
+  ctx.closePath();
+  const rw = ctx.createLinearGradient(fr, 0, W, 0);
+  rw.addColorStop(0, '#1a0535');
+  rw.addColorStop(1, '#050012');
+  ctx.fillStyle = rw;
+  ctx.fill();
+
+  // Wall lockers
+  drawWallPanels(fl, fr, ft, fb);
+
+  // ── Location sign ──
+  if (G.locShow > 0) {
+    const alpha = Math.min(1, G.locShow / 20) * Math.min(1, (G.locShow) / 10);
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = COL.gold;
+    ctx.fillRect(W/2 - 130, 108, 260, 30);
+    ctx.fillStyle = COL.purpleDk;
+    ctx.font = "bold 13px 'Bebas Neue'";
+    ctx.textAlign = 'center';
+    ctx.fillText('📍 ' + LOCS[G.locIdx], W/2, 128);
+    ctx.restore();
+  }
+}
+
+function drawCeilingLights(fl, fr, ft) {
+  const numLights = 6;
+  for (let i = 0; i < numLights; i++) {
+    const t = ((i / numLights) + G.bgScroll * 0.0055) % 1;
+    if (t < 0.04) continue;
+    // At t=0: near VP; at t=1: near screen top
+    const lCenterX = W / 2;
+    const lightW = (fr - fl) + (W + 10 - (fr - fl)) * t;
+    const lightY = ft + (CLY - ft) * (1 - t);
+    const alpha = 0.07 + t * 0.18;
+
+    // Strip
+    ctx.fillStyle = `rgba(255,215,100,${alpha})`;
+    ctx.fillRect(lCenterX - lightW * 0.12, lightY - 2, lightW * 0.24, 3);
+
+    // Glow cone downward on floor
+    const floorY2 = VPY + (FLY - VPY) * t;
+    const coneW = lightW * 0.3 * t;
+    if (coneW > 2) {
+      const cone = ctx.createRadialGradient(lCenterX, floorY2, 0, lCenterX, floorY2, coneW);
+      cone.addColorStop(0, `rgba(255,215,100,${alpha * 0.25})`);
+      cone.addColorStop(1, 'rgba(255,215,100,0)');
+      ctx.fillStyle = cone;
+      ctx.fillRect(lCenterX - coneW, floorY2 - coneW/2, coneW*2, coneW);
+    }
+  }
+}
+
+function drawFloorGrid(fl, fb, fr, FLY) {
+  const numH = 12;
+  for (let i = 0; i <= numH; i++) {
+    const t = ((i / numH) + G.bgScroll * 0.006) % 1;
+    if (t < 0.01) continue;
+    const fy = fb + (FLY - fb) * t;
+    const blend = (fy - fb) / (FLY - fb);
+    const lx = fl  + (-5  - fl)  * blend;
+    const rx = fr  + (W+5 - fr) * blend;
+    ctx.strokeStyle = `rgba(107,47,160,${0.06 + blend * 0.12})`;
+    ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(lx, fy); ctx.lineTo(rx, fy); ctx.stroke();
+  }
+}
+
+function drawWallPanels(fl, fr, ft, fb) {
+  const n = 7;
+  for (let i = 0; i < n; i++) {
+    const t = ((i / n) + G.bgScroll * 0.005) % 1;
+    if (t < 0.04 || t > 0.97) continue;
+
+    // Interpolate wall coords
+    const lx  = fl + (-5  - fl) * t;
+    const rx  = fr + (W+5 - fr) * t;
+    const topY = ft + (CLY - ft) * t;
+    const botY = fb + (FLY - fb) * t;
+    const totalH = botY - topY;
+
+    const pw = 14 + t * 28;
+    const ph = totalH * 0.22;
+    const py2 = topY + totalH * 0.15;
+    const alpha = 0.18 + t * 0.35;
+    const col = `rgba(74,26,117,${alpha})`;
+    const str = `rgba(255,184,0,${alpha * 0.35})`;
+
+    // Left panel
+    ctx.fillStyle = col;
+    ctx.fillRect(lx + 3, py2, pw, ph);
+    ctx.strokeStyle = str; ctx.lineWidth = 0.7;
+    ctx.strokeRect(lx + 3, py2, pw, ph);
+    // Handle
+    ctx.fillStyle = str;
+    ctx.fillRect(lx + 3 + pw * 0.75, py2 + ph * 0.45, 3, ph * 0.1);
+
+    // Right panel
+    ctx.fillStyle = col;
+    ctx.fillRect(rx - pw - 3, py2, pw, ph);
+    ctx.strokeStyle = str; ctx.lineWidth = 0.7;
+    ctx.strokeRect(rx - pw - 3, py2, pw, ph);
+    ctx.fillStyle = str;
+    ctx.fillRect(rx - pw - 3 + pw * 0.2, py2 + ph * 0.45, 3, ph * 0.1);
+
+    // Gold stripe on walls
+    const stripeY = topY + totalH * 0.65;
+    ctx.strokeStyle = `rgba(255,184,0,${alpha * 0.15})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(lx, stripeY); ctx.lineTo(lx + pw + 15, stripeY); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(rx, stripeY); ctx.lineTo(rx - pw - 15, stripeY); ctx.stroke();
+  }
+}
+
+function drawObstacles() {
+  // Sort back-to-front
+  const sorted = [...G.obs].sort((a, b) => a.z - b.z);
+  for (const o of sorted) {
+    const x = wx(o.lane, o.z);
+    const y = wy(o.z);
+    const s = o.z;
+    const bw = o.w * s;
+    const bh = o.h * s;
+
+    ctx.save();
+    ctx.translate(x, y - bh/2);
+
+    // Shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.4)';
+    ctx.beginPath();
+    ctx.ellipse(0, bh/2 + 2, bw/2, 5*s, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    // Body
+    ctx.fillStyle = o.col;
+    ctx.fillRect(-bw/2, -bh/2, bw, bh);
+
+    // Highlight top edge
+    ctx.fillStyle = 'rgba(255,255,255,0.15)';
+    ctx.fillRect(-bw/2, -bh/2, bw, 3*s);
+
+    // Outline
+    ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+    ctx.lineWidth = s;
+    ctx.strokeRect(-bw/2, -bh/2, bw, bh);
+
+    // Emoji label (only when reasonably close)
+    if (s > 0.35) {
+      const fs = Math.max(10, 18 * s);
+      ctx.font = `${fs}px serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(o.emoji, 0, -bh/4);
+
+      if (s > 0.55) {
+        ctx.font = `bold ${Math.max(7, 10 * s)}px 'Bebas Neue'`;
+        ctx.fillStyle = 'rgba(255,255,255,0.85)';
+        ctx.fillText(o.label, 0, bh/4);
+      }
+    }
+
+    // Low obstacle indicator: warning stripe at bottom
+    if (o.kind === 'low') {
+      ctx.fillStyle = 'rgba(255,184,0,0.3)';
+      ctx.fillRect(-bw/2, bh/2 - 5*s, bw, 5*s);
+    }
+
+    ctx.restore();
+  }
+}
+
+function drawCoins() {
+  for (const c of G.coins) {
+    const x = wx(c.lane, c.z);
+    const y = wy(c.z) - 30 * c.z;  // float above floor
+    const r = Math.max(5, 18 * c.z);
+
+    ctx.save();
+    ctx.translate(x, y);
+
+    // Glow
+    const gl = ctx.createRadialGradient(0, 0, 0, 0, 0, r * 2);
+    gl.addColorStop(0, 'rgba(255,184,0,0.3)');
+    gl.addColorStop(1, 'rgba(255,184,0,0)');
+    ctx.fillStyle = gl;
+    ctx.beginPath(); ctx.arc(0, 0, r * 2, 0, Math.PI*2); ctx.fill();
+
+    // Circle
+    ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI*2);
+    ctx.fillStyle = c.col; ctx.fill();
+    ctx.strokeStyle = COL.gold; ctx.lineWidth = c.z * 1.5;
+    ctx.stroke();
+
+    // Emoji
+    if (c.z > 0.3) {
+      ctx.font = `${Math.max(8, 16 * c.z)}px serif`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(c.emoji, 0, 0);
+    }
+
+    ctx.restore();
+  }
+}
+
+function drawPlayer() {
+  const x = G.px;
+  const jumpOffset = G.jumpH;
+  const y = G.py - jumpOffset;
+  const s = PZ;
+
+  // Shadow (on floor)
+  const shadowAlpha = 0.5 - jumpOffset * 0.004;
+  const shadowW = 32 * s * (1 - jumpOffset * 0.005);
+  ctx.fillStyle = `rgba(0,0,0,${Math.max(0.1, shadowAlpha)})`;
+  ctx.beginPath();
+  ctx.ellipse(x, G.py + 2, shadowW, 7*s, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Invincible shimmer
+  if (G.invT > 0 && G.invT % 6 < 3) {
+    ctx.globalAlpha = 0.4;
+  }
+
+  // ── Draw student character ──
+  const bw = 22 * s, bh = 35 * s;
+  const hx = x, hy = y - bh/2 - 14*s;
+
+  // Backpack
+  ctx.fillStyle = '#e65100';
+  ctx.fillRect(x - bw/2 - 5*s, y - bh/2 - 5*s, 8*s, bh * 0.7);
+
+  // Body (purple hoodie)
+  ctx.fillStyle = '#5b25a0';
+  ctx.fillRect(x - bw/2, y - bh/2, bw, bh);
+  // Hoodie detail
+  ctx.fillStyle = '#7c39c4';
+  ctx.fillRect(x - bw/4, y - bh/2, bw/2, bh * 0.4);
+
+  // Head
+  ctx.beginPath();
+  ctx.arc(hx, hy, 12*s, 0, Math.PI*2);
+  ctx.fillStyle = '#f0c27f';
+  ctx.fill();
+
+  // Hair
+  ctx.fillStyle = '#2c1a0e';
+  ctx.beginPath();
+  ctx.arc(hx, hy - 3*s, 12*s, Math.PI, 0);
+  ctx.fill();
+  ctx.fillRect(hx - 12*s, hy - 3*s, 24*s, 6*s);
+
+  // Eyes
+  ctx.fillStyle = '#1a1a1a';
+  ctx.beginPath(); ctx.arc(hx - 4*s, hy, 2*s, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(hx + 4*s, hy, 2*s, 0, Math.PI*2); ctx.fill();
+
+  // Legs (animated)
+  const legAnim = G.jumping ? 0 : Math.sin(G.frame * 0.28) * 15;
+  ctx.strokeStyle = '#3d1e72';
+  ctx.lineWidth = 6*s;
+  ctx.lineCap = 'round';
+  // Left leg
+  ctx.beginPath();
+  ctx.moveTo(x - 5*s, y + bh/2);
+  ctx.lineTo(x - 7*s + legAnim*0.3, y + bh/2 + 18*s + legAnim*0.5);
+  ctx.stroke();
+  // Right leg
+  ctx.beginPath();
+  ctx.moveTo(x + 5*s, y + bh/2);
+  ctx.lineTo(x + 7*s - legAnim*0.3, y + bh/2 + 18*s - legAnim*0.5);
+  ctx.stroke();
+
+  // Feet
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.ellipse(x - 7*s + legAnim*0.3, y + bh/2 + 18*s + legAnim*0.5, 7*s, 4*s, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(x + 7*s - legAnim*0.3, y + bh/2 + 18*s - legAnim*0.5, 7*s, 4*s, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  ctx.globalAlpha = 1;
+
+  // Jump hint arrow when in air
+  if (G.jumpH > 10) {
+    ctx.fillStyle = `rgba(255,184,0,${Math.min(1, G.jumpH/40)})`;
+    ctx.font = `${14*s}px serif`;
+    ctx.textAlign = 'center';
+    ctx.fillText('↑', x, y - 14*s - 20);
+  }
+}
+
+function drawParticles() {
+  for (const p of G.parts) {
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, p.life);
+    ctx.fillStyle = p.col;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+function drawHUD() {
+  // ── Top bar ──
+  ctx.fillStyle = 'rgba(10,1,24,0.75)';
+  ctx.fillRect(0, 0, W, 50);
+  ctx.strokeStyle = 'rgba(255,184,0,0.3)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, 50); ctx.lineTo(W, 50); ctx.stroke();
+
+  // Score
+  ctx.font = "bold 13px 'Bebas Neue'";
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.textAlign = 'left';
+  ctx.fillText('SCORE', 16, 20);
+  ctx.font = "bold 26px 'Bebas Neue'";
+  ctx.fillStyle = COL.white;
+  ctx.fillText(G.score, 16, 44);
+
+  // Speed indicator
+  const speedPct = Math.min(1, (G.speed - 2.4) / 6.6);
+  ctx.font = "bold 10px 'Bebas Neue'";
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.textAlign = 'center';
+  ctx.fillText('SPEED', W/2, 16);
+  ctx.fillStyle = 'rgba(255,255,255,0.15)';
+  ctx.fillRect(W/2 - 40, 20, 80, 5);
+  ctx.fillStyle = speedPct > 0.8 ? '#e53935' : speedPct > 0.5 ? COL.gold : COL.green;
+  ctx.fillRect(W/2 - 40, 20, 80 * speedPct, 5);
+
+  // Hi score
+  ctx.font = "bold 11px 'Bebas Neue'";
+  ctx.fillStyle = 'rgba(255,184,0,0.6)';
+  ctx.textAlign = 'right';
+  ctx.fillText('BEST  ' + hiScore, W - 16, 20);
+
+  // Lives (hearts)
+  for (let i = 0; i < 3; i++) {
+    ctx.font = '16px serif';
+    ctx.textAlign = 'right';
+    ctx.globalAlpha = i < G.lives ? 1 : 0.2;
+    ctx.fillText('❤️', W - 16 - i * 22, 44);
+  }
+  ctx.globalAlpha = 1;
+
+  // Jump hint at bottom
+  const hint = G.jumping ? '' : '← → LANES  |  ↑ JUMP';
+  ctx.font = "10px 'DM Sans'";
+  ctx.fillStyle = 'rgba(255,255,255,0.25)';
+  ctx.textAlign = 'center';
+  ctx.fillText(hint, W/2, H - 10);
+}
+
+// ══════════════════════════════════
+//  SCREENS
+// ══════════════════════════════════
+function drawTitle() {
+  // Background
+  const bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, '#0a0118');
+  bg.addColorStop(0.5, '#1a0535');
+  bg.addColorStop(1, '#0a0118');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // Animated hallway preview (static for title)
+  ctx.fillStyle = 'rgba(107,47,160,0.15)';
+  ctx.beginPath();
+  ctx.moveTo(W/2-60, H*0.25);
+  ctx.lineTo(W/2+60, H*0.25);
+  ctx.lineTo(W, H*0.7);
+  ctx.lineTo(0, H*0.7);
+  ctx.closePath();
+  ctx.fill();
+
+  // Gold accent lines
+  for (let i = 0; i < 3; i++) {
+    const y = H * (0.3 + i * 0.15);
+    ctx.strokeStyle = `rgba(255,184,0,${0.05 + i * 0.04})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+
+  // Logo badge
+  ctx.fillStyle = COL.purpleDk;
+  ctx.fillRect(W/2-140, 70, 280, 110);
+  ctx.fillStyle = COL.gold;
+  ctx.fillRect(W/2-140, 70, 280, 6);
+  ctx.fillRect(W/2-140, 174, 280, 6);
+
+  // Title
+  ctx.font = "bold 20px 'Bebas Neue'";
+  ctx.fillStyle = 'rgba(255,184,0,0.8)';
+  ctx.textAlign = 'center';
+  ctx.fillText('SAINT PAUL COLLEGE', W/2, 102);
+
+  ctx.font = "bold 68px 'Bebas Neue'";
+  ctx.fillStyle = COL.white;
+  ctx.fillText('HALL', W/2, 158);
+
+  ctx.font = "bold 68px 'Bebas Neue'";
+  ctx.fillStyle = COL.gold;
+  ctx.fillText('RUNNER', W/2 + 2, 228);
+  ctx.fillStyle = COL.white;
+  ctx.fillText('RUNNER', W/2, 226);
+
+  // Character preview (decorative)
+  ctx.font = '52px serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('🏃', W/2, 310);
+
+  // Instructions
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.font = "16px 'DM Sans'";
+  ctx.textAlign = 'center';
+  ctx.fillText('Run through the hallways of SPC!', W/2, 358);
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.font = "13px 'DM Sans'";
+  ctx.fillText('← → to switch lanes  ·  ↑ or SPACE to jump', W/2, 383);
+  ctx.fillText('Swipe on mobile', W/2, 402);
+
+  // High score
+  if (hiScore > 0) {
+    ctx.fillStyle = 'rgba(255,184,0,0.7)';
+    ctx.font = "14px 'Bebas Neue'";
+    ctx.fillText(`BEST SCORE: ${hiScore}`, W/2, 432);
+  }
+
+  // Start button
+  const blink = Math.floor(Date.now() / 500) % 2 === 0;
+  ctx.fillStyle = blink ? COL.gold : COL.goldLt;
+  ctx.fillRect(W/2 - 120, 460, 240, 56);
+  ctx.fillStyle = COL.purpleDk;
+  ctx.font = "bold 28px 'Bebas Neue'";
+  ctx.textAlign = 'center';
+  ctx.fillText('TAP TO START', W/2, 496);
+
+  // Obstacles preview
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.font = "12px 'DM Sans'";
+  ctx.fillText('Dodge: 🛒 🖥️ 👨‍🏫 🔒  |  Jump: 🎒 ⚠️ 🪑', W/2, 542);
+
+  // Collectibles preview
+  ctx.fillText('Collect: ☕ +50  📖 +25  ⭐ +10', W/2, 562);
+
+  // Footer
+  ctx.fillStyle = 'rgba(255,184,0,0.4)';
+  ctx.font = "11px 'Bebas Neue'";
+  ctx.fillText('A CAMPAIGN MINI-GAME BY GENESTA CORDERO', W/2, H - 18);
+}
+
+function drawGameOver() {
+  // Semi-transparent overlay
+  ctx.fillStyle = 'rgba(10,1,24,0.9)';
+  ctx.fillRect(0, 0, W, H);
+
+  // Card
+  ctx.fillStyle = COL.purpleDk;
+  ctx.fillRect(W/2-155, 120, 310, 360);
+  ctx.fillStyle = COL.gold;
+  ctx.fillRect(W/2-155, 120, 310, 6);
+  ctx.fillRect(W/2-155, 474, 310, 6);
+
+  ctx.font = "bold 56px 'Bebas Neue'";
+  ctx.fillStyle = COL.red;
+  ctx.textAlign = 'center';
+  ctx.fillText('BUSTED!', W/2, 200);
+
+  ctx.font = "bold 18px 'Bebas Neue'";
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.fillText('YOU HIT AN OBSTACLE', W/2, 228);
+
+  ctx.font = "12px 'DM Sans'";
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.fillText('YOUR SCORE', W/2, 278);
+  ctx.font = "bold 72px 'Bebas Neue'";
+  ctx.fillStyle = COL.white;
+  ctx.fillText(endScore, W/2, 342);
+
+  const isNew = endScore >= hiScore && endScore > 0;
+  ctx.font = "bold 16px 'Bebas Neue'";
+  ctx.fillStyle = COL.gold;
+  ctx.fillText(isNew ? '🏆 NEW BEST!' : `BEST: ${hiScore}`, W/2, 372);
+
+  // Play again button
+  const blink = Math.floor(Date.now() / 500) % 2 === 0;
+  ctx.fillStyle = blink ? COL.gold : COL.goldLt;
+  ctx.fillRect(W/2-100, 400, 200, 52);
+  ctx.fillStyle = COL.purpleDk;
+  ctx.font = "bold 24px 'Bebas Neue'";
+  ctx.fillText('PLAY AGAIN', W/2, 434);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.3)';
+  ctx.font = "12px 'DM Sans'";
+  ctx.fillText('Tap or press Enter to restart', W/2, 498);
+
+  // Tip
+  const tips = [
+    'TIP: Jump over backpacks and chairs!',
+    'TIP: Switch lanes to dodge carts and lockers!',
+    'TIP: Grab ☕ coffee for +50 points!',
+    'TIP: Speed increases over time!',
+    'TIP: You have 3 lives — use them wisely!',
+  ];
+  ctx.fillStyle = 'rgba(255,184,0,0.55)';
+  ctx.font = "12px 'DM Sans'";
+  ctx.fillText(tips[endScore % tips.length], W/2, 558);
+
+  // Campaign footer
+  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  ctx.font = "11px 'Bebas Neue'";
+  ctx.fillText('VOTE GENESTA CORDERO · MARCH 9–13', W/2, H - 18);
+}
+
+// ══════════════════════════════════
+//  MAIN LOOP
+// ══════════════════════════════════
+let lastT = 0;
+function loop(t) {
+  requestAnimationFrame(loop);
+  if (t - lastT < 14) return; // cap ~70fps
+  lastT = t;
+
+  if (appState === 'title') {
+    drawTitle();
+    if (swipe === 'tap' || justPressed('Enter') || justPressed('Space') || justPressed('ArrowUp')) {
+      swipe = null;
+      SFX.start();
+      newGame();
+    }
+    swipe = null;
+    prevKeys = new Set(keys);
+    return;
+  }
+
+  if (appState === 'over') {
+    drawGameOver();
+    if (swipe === 'tap' || justPressed('Enter') || justPressed('Space')) {
+      swipe = null;
+      SFX.start();
+      newGame();
+    }
+    swipe = null;
+    prevKeys = new Set(keys);
+    return;
+  }
+
+  // ── Playing ──
+  update();
+  draw();
+  prevKeys = new Set(keys);
+}
+
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
