@@ -904,6 +904,8 @@
     .games-grid {
       display: grid;
       gap: 1.5rem;
+      max-width: 900px;
+      margin: 0 auto;
     }
 
     @media (min-width: 768px) {
@@ -915,6 +917,8 @@
     .game-card {
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      flex-direction: column;
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
@@ -930,6 +934,12 @@
     .game-card-preview {
       display: flex;
       justify-content: center;
+    }
+
+    .game-card-text {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
     }
 
     .game-card-tag {
@@ -957,6 +967,7 @@
       max-width: none;
       margin-left: 0;
       margin-right: 0;
+      flex: 1;
     }
 
     /* Hall Runner preview graphic */
@@ -1052,7 +1063,7 @@
       <li><a href="#student-voice">Your Voice</a></li>
       <li><a href="#vote">Vote</a></li>
     </ul>
-    <a href="#vote" class="nav-cta">VOTE MAR 9&ndash;13</a>
+    <a href="https://www.saintpaul.edu/student-life/student-senate/" class="nav-cta" target="_blank" rel="noopener noreferrer">VOTE MAR 9&ndash;13</a>
   </nav>
 
   <!-- HERO -->
