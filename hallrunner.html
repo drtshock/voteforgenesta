@@ -66,6 +66,127 @@ let G = {};
 let hiScore = +localStorage.getItem('spc_hi') || 0;
 let endScore = 0;
 
+// ── Leaderboard (Supabase) ──
+const SUPA_URL = 'https://sixgfouqaqklzfzicuyz.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpeGdmb3VxYXFrbHpmemljdXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5MDg0MDIsImV4cCI6MjA4NzQ4NDQwMn0.73nCXQ1X98QXq0g_iVBUZpVq2rv1aeqakD_Q__1mFvE';
+let lbEntries = [];
+let lbLoading = false;
+let lbError = false;
+let scoreSubmitted = false;
+
+function fetchLeaderboard() {
+  if (!SUPA_URL || SUPA_URL.startsWith('YOUR_')) return;
+  lbLoading = true;
+  lbError = false;
+  fetch(SUPA_URL + '/rest/v1/scores?select=score,created_at&order=score.desc,created_at.desc&limit=10', {
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
+  })
+  .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+  .then(function(data) { lbEntries = data; lbLoading = false; })
+  .catch(function() { lbError = true; lbLoading = false; });
+}
+
+function submitScore(score, zone) {
+  if (scoreSubmitted || score <= 0) return;
+  if (!SUPA_URL || SUPA_URL.startsWith('YOUR_')) return;
+  scoreSubmitted = true;
+  fetch(SUPA_URL + '/rest/v1/scores', {
+    method: 'POST',
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': 'Bearer ' + SUPA_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify({ score: score, zone: zone })
+  })
+  .then(function() { fetchLeaderboard(); })
+  .catch(function() {});
+}
+
+function timeAgo(iso) {
+  var s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (s < 60) return 'just now';
+  var m = Math.floor(s / 60);
+  if (m < 60) return m + 'm ago';
+  var h = Math.floor(m / 60);
+  if (h < 24) return h + 'h ago';
+  var d = Math.floor(h / 24);
+  if (d === 1) return 'yesterday';
+  return d + 'd ago';
+}
+
+function drawLeaderboard(playerScore) {
+  var y0 = 258;
+
+  // Header
+  ctx.font = "bold 11px 'Bebas Neue'";
+  ctx.fillStyle = 'rgba(255,184,0,0.6)';
+  ctx.textAlign = 'center';
+  ctx.fillText('\u2500\u2500 TOP RUNNERS \u2500\u2500', W/2, y0);
+
+  if (lbLoading) {
+    ctx.font = "11px 'DM Sans'";
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.fillText('Loading\u2026', W/2, y0 + 44);
+    return;
+  }
+
+  if (lbError || !SUPA_URL || SUPA_URL.startsWith('YOUR_')) {
+    ctx.font = "11px 'DM Sans'";
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.fillText('Leaderboard unavailable', W/2, y0 + 44);
+    return;
+  }
+
+  if (lbEntries.length === 0) {
+    ctx.font = "11px 'DM Sans'";
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.fillText('No scores yet \u2014 be the first!', W/2, y0 + 44);
+    return;
+  }
+
+  var top5 = lbEntries.slice(0, 5);
+  var matched = false;
+  var lineH = 20;
+
+  for (var i = 0; i < top5.length; i++) {
+    var entry = top5[i];
+    var ey = y0 + 22 + i * lineH;
+    var isPlayer = !matched && entry.score === playerScore && playerScore > 0;
+    if (isPlayer) matched = true;
+
+    // Highlight row
+    if (isPlayer) {
+      ctx.fillStyle = 'rgba(255,184,0,0.1)';
+      ctx.fillRect(W/2 - 130, ey - 12, 260, lineH);
+    }
+
+    // Rank
+    ctx.font = "bold 13px 'Bebas Neue'";
+    ctx.fillStyle = isPlayer ? COL.gold : 'rgba(255,255,255,0.45)';
+    ctx.textAlign = 'right';
+    ctx.fillText((i + 1) + '.', W/2 - 100, ey);
+
+    // Score
+    ctx.font = "bold 13px 'Bebas Neue'";
+    ctx.fillStyle = isPlayer ? COL.white : 'rgba(255,255,255,0.7)';
+    ctx.textAlign = 'left';
+    ctx.fillText(entry.score.toLocaleString(), W/2 - 90, ey);
+
+    // Time / YOU marker
+    ctx.font = "11px 'DM Sans'";
+    ctx.textAlign = 'right';
+    if (isPlayer) {
+      ctx.fillStyle = COL.gold;
+      ctx.fillText('\u2190 YOU  ' + timeAgo(entry.created_at), W/2 + 128, ey);
+    } else {
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      ctx.fillText(timeAgo(entry.created_at), W/2 + 128, ey);
+    }
+  }
+}
+
 function newGame() {
   G = {
     frame: 0, score: 0, lives: 3, speed: 2.4,
@@ -90,6 +211,7 @@ function newGame() {
     // location sign
     locIdx: 0, locTimer: 0, locShow: 0,
   };
+  scoreSubmitted = false;
   appState = 'game';
 }
 
@@ -399,6 +521,8 @@ function update() {
             endScore = G.score;
             if (G.score > hiScore) { hiScore = G.score; localStorage.setItem('spc_hi', hiScore); }
             SFX.die();
+            submitScore(G.score, G.zone);
+            fetchLeaderboard();
             setTimeout(() => { appState = 'over'; }, 700);
           }
         }
@@ -1046,58 +1170,68 @@ function drawGameOver() {
   ctx.fillStyle='rgba(10,1,24,0.92)';
   ctx.fillRect(0,0,W,H);
 
+  // Panel
   ctx.fillStyle=COL.purpleDk;
-  ctx.fillRect(W/2-158,110,316,380);
+  ctx.fillRect(W/2-158,60,316,462);
   ctx.fillStyle=COL.gold;
-  ctx.fillRect(W/2-158,110,316,6);
-  ctx.fillRect(W/2-158,484,316,6);
+  ctx.fillRect(W/2-158,60,316,6);
+  ctx.fillRect(W/2-158,516,316,6);
 
-  ctx.font="bold 58px 'Bebas Neue'";
+  // BUSTED!
+  ctx.font="bold 46px 'Bebas Neue'";
   ctx.fillStyle=COL.red;
   ctx.textAlign='center';
-  ctx.fillText('BUSTED!', W/2, 192);
+  ctx.fillText('BUSTED!', W/2, 118);
 
-  ctx.font="bold 16px 'Bebas Neue'";
+  ctx.font="bold 14px 'Bebas Neue'";
   ctx.fillStyle='rgba(255,255,255,0.55)';
-  ctx.fillText('YOU HIT AN OBSTACLE', W/2, 220);
+  ctx.fillText('YOU HIT AN OBSTACLE', W/2, 140);
 
+  // Score
   ctx.font="11px 'DM Sans'";
   ctx.fillStyle='rgba(255,255,255,0.35)';
-  ctx.fillText('YOUR SCORE', W/2, 265);
-  ctx.font="bold 76px 'Bebas Neue'";
+  ctx.fillText('YOUR SCORE', W/2, 168);
+  ctx.font="bold 50px 'Bebas Neue'";
   ctx.fillStyle=COL.white;
-  ctx.fillText(endScore, W/2, 336);
+  ctx.fillText(endScore.toLocaleString(), W/2, 210);
 
   const isNew = endScore >= hiScore && endScore > 0;
-  ctx.font="bold 17px 'Bebas Neue'";
+  ctx.font="bold 14px 'Bebas Neue'";
   ctx.fillStyle=COL.gold;
-  ctx.fillText(isNew ? '🏆 NEW PERSONAL BEST!' : `BEST: ${hiScore}`, W/2, 368);
+  ctx.fillText(isNew ? '🏆 NEW PERSONAL BEST!' : 'BEST: ' + hiScore.toLocaleString(), W/2, 236);
 
+  // Leaderboard
+  drawLeaderboard(endScore);
+
+  // Play Again button
   const blink = Math.floor(Date.now()/480)%2===0;
   ctx.fillStyle=blink?COL.gold:COL.goldLt;
-  ctx.fillRect(W/2-105,396,210,54);
+  ctx.fillRect(W/2-105,384,210,48);
   ctx.fillStyle=COL.purpleDk;
-  ctx.font="bold 26px 'Bebas Neue'";
-  ctx.fillText('PLAY AGAIN', W/2, 431);
+  ctx.font="bold 24px 'Bebas Neue'";
+  ctx.textAlign='center';
+  ctx.fillText('PLAY AGAIN', W/2, 416);
 
   ctx.fillStyle='rgba(255,255,255,0.28)';
   ctx.font="11px 'DM Sans'";
-  ctx.fillText('Tap or press Enter to restart', W/2, 496);
+  ctx.fillText('Tap or press Enter to restart', W/2, 448);
 
+  // Tip
   const tips = [
-    '↓ SLIDE under banners and door signs!',
-    '↑ JUMP over backpacks, chairs, and books!',
-    '← → Switch lanes to dodge big obstacles!',
-    '☕ Grab coffee for +50 pts — best collect!',
+    '\u2193 SLIDE under banners and door signs!',
+    '\u2191 JUMP over backpacks, chairs, and books!',
+    '\u2190 \u2192 Switch lanes to dodge big obstacles!',
+    '\u2615 Grab coffee for +50 pts \u2014 best collect!',
     'Build a combo to multiply your points!',
-    '3 collects = x2 · 6 = x3 · 10 = x4!',
-    'Speed increases over time — stay sharp!',
+    '3 collects = x2 \u00b7 6 = x3 \u00b7 10 = x4!',
+    'Speed increases over time \u2014 stay sharp!',
     'Red floor glow = obstacle coming in your lane!',
   ];
   ctx.fillStyle='rgba(255,184,0,0.5)';
   ctx.font="12px 'DM Sans'";
-  ctx.fillText(tips[Math.floor(Date.now()/4000) % tips.length], W/2, 548);
+  ctx.fillText(tips[Math.floor(Date.now()/4000) % tips.length], W/2, 490);
 
+  // Footer
   ctx.fillStyle='rgba(255,184,0,0.55)';
   ctx.font="13px 'Bebas Neue'";
   ctx.fillText('\u2190 VOTEFORGENESTA.COM', W/2, H-32);
