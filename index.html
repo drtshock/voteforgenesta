@@ -776,6 +776,130 @@
       }
     }
 
+    /* ---- BINGO PROMO ---- */
+    .bingo-promo {
+      background: var(--purple-dark);
+      padding: 3.5rem 1.5rem;
+    }
+
+    .bingo-promo-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .bingo-promo-text {
+      text-align: center;
+    }
+
+    .bingo-promo-eyebrow {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+
+    .bingo-promo h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.2rem, 6vw, 3.2rem);
+      color: var(--white);
+      letter-spacing: 0.03em;
+      line-height: 1;
+      margin-bottom: 0.75rem;
+    }
+
+    .bingo-promo p {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.6;
+      margin-bottom: 1.25rem;
+      max-width: 440px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .bingo-promo-btn {
+      display: inline-block;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.15rem;
+      letter-spacing: 0.1em;
+      background: var(--gold);
+      color: var(--purple-dark);
+      padding: 0.75rem 2rem;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+      box-shadow: 0 4px 16px rgba(255,184,0,0.3);
+    }
+
+    .bingo-promo-btn:hover {
+      background: var(--gold-light);
+      transform: translateY(-2px);
+    }
+
+    /* Mini bingo preview card */
+    .bingo-promo-preview {
+      flex-shrink: 0;
+    }
+
+    .mini-card {
+      width: 160px;
+      border: 2px solid rgba(255,184,0,0.3);
+    }
+
+    .mini-header {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      background: var(--purple);
+    }
+
+    .mini-header span {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      color: var(--gold);
+      text-align: center;
+      padding: 0.2rem 0;
+      letter-spacing: 0.05em;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 2px;
+      padding: 2px;
+      background: rgba(255,255,255,0.1);
+    }
+
+    .mc {
+      aspect-ratio: 1;
+      background: rgba(255,255,255,0.05);
+      border-radius: 1px;
+    }
+
+    .mc.marked { background: var(--purple); }
+    .mc.free { background: var(--gold); opacity: 0.9; }
+    .mc.winning {
+      background: var(--gold);
+      animation: pulse 0.7s ease infinite alternate;
+    }
+
+    @media (min-width: 640px) {
+      .bingo-promo-inner {
+        flex-direction: row;
+        justify-content: center;
+        gap: 4rem;
+      }
+      .bingo-promo-text { text-align: left; }
+      .bingo-promo p { margin-left: 0; }
+    }
+
+    @media (min-width: 768px) {
+      .bingo-promo { padding: 4rem 3rem; }
+    }
+
     /* ---- EXTRA DIVIDERS ---- */
     .divider--cream-to-gold {
       background: var(--gold);
@@ -983,6 +1107,35 @@
 
   <!-- DIVIDER -->
   <div class="divider divider--gold-to-purple" aria-hidden="true"></div>
+
+  <!-- BINGO PROMO -->
+  <section class="bingo-promo">
+    <div class="bingo-promo-inner">
+      <div class="bingo-promo-text">
+        <p class="bingo-promo-eyebrow">FOR FUN &bull; FREE &bull; NO SIGN-UP</p>
+        <h2>KNOW YOUR CAMPUS?</h2>
+        <p>Explore Saint Paul College with a game of Campus BINGO — 25 challenges, real locations, confetti when you win. Play between classes, share with friends.</p>
+        <a href="/bingo.html" class="bingo-promo-btn">PLAY CAMPUS BINGO &rarr;</a>
+      </div>
+      <div class="bingo-promo-preview" aria-hidden="true">
+        <div class="mini-card">
+          <div class="mini-header">
+            <span>B</span><span>I</span><span>N</span><span>G</span><span>O</span>
+          </div>
+          <div class="mini-grid">
+            <div class="mc marked"></div><div class="mc"></div><div class="mc marked"></div><div class="mc"></div><div class="mc marked"></div>
+            <div class="mc"></div><div class="mc marked"></div><div class="mc"></div><div class="mc"></div><div class="mc marked"></div>
+            <div class="mc marked"></div><div class="mc"></div><div class="mc free"></div><div class="mc"></div><div class="mc marked"></div>
+            <div class="mc"></div><div class="mc marked"></div><div class="mc"></div><div class="mc marked"></div><div class="mc"></div>
+            <div class="mc winning"></div><div class="mc winning"></div><div class="mc winning"></div><div class="mc winning"></div><div class="mc winning"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIVIDER -->
+  <div class="divider divider--purple-to-cream" aria-hidden="true"></div>
 
   <!-- VOTE -->
   <section class="vote" id="vote">
