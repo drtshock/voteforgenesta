@@ -396,6 +396,32 @@
       gap: 1.5rem;
     }
 
+    .platform-card ul {
+      list-style: none;
+      margin-top: 0.75rem;
+    }
+
+    .platform-card ul li {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      line-height: 1.5;
+      padding: 0.3rem 0 0.3rem 1.1rem;
+      position: relative;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .platform-card ul li:last-child {
+      border-bottom: none;
+    }
+
+    .platform-card ul li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--gold);
+      font-size: 0.8rem;
+    }
+
     .platform-card {
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -459,7 +485,15 @@
         padding: 5rem 3rem;
       }
       .platform-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(6, 1fr);
+      }
+      .platform-card {
+        grid-column: span 2;
+      }
+      /* Last two cards: span 3 each for a centered 2-up bottom row */
+      .platform-card:nth-child(4),
+      .platform-card:nth-child(5) {
+        grid-column: span 3;
       }
     }
 
@@ -697,29 +731,69 @@
   <section class="platform" id="platform">
     <div class="platform-header">
       <h2>MY PLATFORM</h2>
-      <p>Three commitments to make student government work for every student at Saint Paul College.</p>
+      <p>Five areas where I'll show up, advocate hard, and move the needle — incrementally and intentionally — for every student at Saint Paul College.</p>
     </div>
     <div class="platform-grid">
 
       <div class="platform-card">
         <div class="card-number">01</div>
-        <h3>AFFORDABLE &amp; EQUITABLE EDUCATION</h3>
-        <p>I will advocate strongly during tuition and fee consultations to ensure student financial concerns are prioritized. Higher education should be attainable for all students, regardless of economic background.</p>
-        <span class="card-tagline">YOUR VOICE IN TUITION DECISIONS</span>
+        <h3>FOOD, NUTRITION &amp; BASIC NEEDS</h3>
+        <p>Students can't learn on an empty stomach or on cafeteria food that doesn't reflect who they are. I'll push for real improvements and make sure every student can access the support they need.</p>
+        <ul>
+          <li>Healthier, fresh, and locally sourced cafeteria options</li>
+          <li>Halal and Kosher menu options as a standard offering</li>
+          <li>More affordable meal pricing for students</li>
+          <li>Expanded access to basic needs support services and grant funding</li>
+        </ul>
+        <span class="card-tagline">REAL FOOD, REAL SUPPORT</span>
       </div>
 
       <div class="platform-card">
         <div class="card-number">02</div>
-        <h3>TRANSPARENT &amp; RESPONSIVE GOVERNANCE</h3>
-        <p>I will modernize our outreach through social media, campus events, and direct forums to ensure the Senate is responsive and accessible to the entire student body. No more closed doors.</p>
-        <span class="card-tagline">A SENATE YOU CAN SEE</span>
+        <h3>STUDENT RIGHTS &amp; PROTECTIONS</h3>
+        <p>Every student deserves to know — and actually access — the full protections available to them. I'll make sure the Senate actively communicates and advocates for students' rights.</p>
+        <ul>
+          <li>Clearer communication about Title IX and federal protections on campus</li>
+          <li>Proactive outreach about rights and exceptions relevant to the current political climate</li>
+          <li>Improved accommodations and accessibility for students with disabilities</li>
+        </ul>
+        <span class="card-tagline">KNOW YOUR RIGHTS</span>
       </div>
 
       <div class="platform-card">
         <div class="card-number">03</div>
-        <h3>INCLUSIVE LEADERSHIP &amp; OPPORTUNITY</h3>
-        <p>I will strengthen support for student organizations, expand leadership development, and ensure underrepresented voices are actively included in campus decision-making processes.</p>
-        <span class="card-tagline">EVERY STUDENT REPRESENTED</span>
+        <h3>ACADEMIC SUPPORT &amp; TUTORING</h3>
+        <p>Struggling students shouldn't have to figure it out alone. I'll build out robust support systems so every student has someone in their corner.</p>
+        <ul>
+          <li>Expand existing tutoring services and hours</li>
+          <li>Create a peer tutoring program connecting students across subjects</li>
+          <li>Launch a faculty tutoring initiative to bridge classroom and office hours</li>
+        </ul>
+        <span class="card-tagline">SUPPORT THAT SHOWS UP</span>
+      </div>
+
+      <div class="platform-card">
+        <div class="card-number">04</div>
+        <h3>CHILDCARE &amp; TRANSPORTATION</h3>
+        <p>Getting to campus — and staying there — shouldn't be a luxury. I'll work to remove the logistical barriers that push student parents and commuters out the door.</p>
+        <ul>
+          <li>Access to free on-campus childcare during study time for student parents</li>
+          <li>Transportation supports: free or subsidized rideshare rides</li>
+          <li>Gas grants and transit assistance for commuting students</li>
+        </ul>
+        <span class="card-tagline">REMOVING BARRIERS TO SHOW UP</span>
+      </div>
+
+      <div class="platform-card">
+        <div class="card-number">05</div>
+        <h3>COMMUNITY &amp; BELONGING</h3>
+        <p>Commuter campuses can feel like a bus stop. I want Saint Paul College to feel like a place you actually want to be — welcoming, alive, and built for all of us.</p>
+        <ul>
+          <li>More campus-funded events with real community and cultural representation</li>
+          <li>Low or no-cost community meals and gatherings</li>
+          <li>Better, more inviting spaces to study, socialize, and decompress between classes</li>
+        </ul>
+        <span class="card-tagline">BUILD THE VIBE</span>
       </div>
 
     </div>
