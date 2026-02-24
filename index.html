@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Genesta Cordero for Student Senate President | Saint Paul College</title>
+  <meta name="description" content="Genesta Cordero is running for Student Senate President at Saint Paul College. A stronger student voice for affordable education, transparent governance, and inclusive leadership.">
+  <meta property="og:title" content="Genesta Cordero for Student Senate President">
+  <meta property="og:description" content="A stronger student voice at Saint Paul College.">
+  <meta property="og:type" content="website">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --purple: #6B2FA0;
+      --purple-deep: #4A1A75;
+      --purple-dark: #1A0535;
+      --gold: #FFB800;
+      --gold-light: #FFD54F;
+      --cream: #FFFBF0;
+      --white: #FFFFFF;
+      --text: #1A1A2E;
+      --text-light: rgba(255, 255, 255, 0.9);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      background: var(--cream);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---- NAV ---- */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(26, 5, 53, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .nav-brand {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      color: var(--gold);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-links {
+      display: none;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      color: var(--white);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--gold);
+    }
+
+    .nav-cta {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      background: var(--gold);
+      color: var(--purple-dark);
+      padding: 0.5rem 1.25rem;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .nav-cta:hover {
+      background: var(--gold-light);
+      transform: translateY(-1px);
+    }
+
+    @media (min-width: 768px) {
+      .nav {
+        padding: 1rem 3rem;
+      }
+      .nav-links {
+        display: flex;
+      }
+    }
+
+    /* ---- HERO ---- */
+    .hero {
+      min-height: 100vh;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 6rem 1.5rem 4rem;
+      background: linear-gradient(160deg, var(--purple-dark) 0%, #2D0F4E 40%, var(--purple) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Geometric decorations */
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -20%;
+      right: -10%;
+      width: 60vw;
+      height: 60vw;
+      background: rgba(107, 47, 160, 0.3);
+      transform: rotate(45deg);
+      border-radius: 3rem;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -15%;
+      left: -15%;
+      width: 50vw;
+      height: 50vw;
+      background: rgba(255, 184, 0, 0.07);
+      transform: rotate(25deg);
+      border-radius: 3rem;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+    }
+
+    .hero-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1rem, 2.5vw, 1.4rem);
+      color: var(--gold);
+      letter-spacing: 0.2em;
+      margin-bottom: 1rem;
+    }
+
+    .hero-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 15vw, 10rem);
+      line-height: 0.9;
+      color: var(--white);
+      letter-spacing: -0.01em;
+      transform: rotate(-2deg);
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-name span {
+      display: block;
+      color: var(--gold);
+    }
+
+    .hero-slogan {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--purple-dark);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
+      letter-spacing: 0.08em;
+      padding: 0.5rem 1.5rem;
+      margin: 1.5rem 0;
+      transform: rotate(-2deg);
+    }
+
+    .hero-office {
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+      color: var(--text-light);
+      margin-bottom: 2.5rem;
+      font-weight: 400;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: 0.1em;
+      background: var(--gold);
+      color: var(--purple-dark);
+      padding: 0.9rem 2.5rem;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(255, 184, 0, 0.3);
+    }
+
+    .hero-cta:hover {
+      background: var(--gold-light);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 30px rgba(255, 184, 0, 0.4);
+    }
+
+    /* ---- ANGLED SECTION DIVIDER ---- */
+    .divider {
+      height: 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .divider--purple-to-cream {
+      background: var(--cream);
+    }
+
+    .divider--purple-to-cream::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -5%;
+      right: -5%;
+      height: 100%;
+      background: linear-gradient(160deg, var(--purple-dark) 0%, var(--purple) 100%);
+      transform: skewY(-2deg);
+      transform-origin: top left;
+    }
+
+    .divider--cream-to-purple {
+      background: linear-gradient(160deg, var(--purple-dark) 0%, #2D0F4E 100%);
+    }
+
+    .divider--cream-to-purple::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -5%;
+      right: -5%;
+      height: 100%;
+      background: var(--cream);
+      transform: skewY(-2deg);
+      transform-origin: top left;
+    }
+
+    .divider--purple-to-gold {
+      background: var(--gold);
+    }
+
+    .divider--purple-to-gold::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -5%;
+      right: -5%;
+      height: 100%;
+      background: linear-gradient(160deg, var(--purple-dark) 0%, #2D0F4E 100%);
+      transform: skewY(-2deg);
+      transform-origin: top left;
+    }
+
+    .divider--gold-to-purple {
+      background: var(--purple-dark);
+    }
+
+    .divider--gold-to-purple::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -5%;
+      right: -5%;
+      height: 100%;
+      background: var(--gold);
+      transform: skewY(-2deg);
+      transform-origin: top left;
+    }
+
+    /* ---- ABOUT ---- */
+    .about {
+      background: var(--cream);
+      padding: 4rem 1.5rem;
+    }
+
+    .about-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .about-photo {
+      position: relative;
+    }
+
+    .about-photo img {
+      width: 100%;
+      max-width: 400px;
+      display: block;
+      margin: 0 auto;
+      box-shadow: 12px 12px 0 var(--gold);
+    }
+
+    .about-text h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      color: var(--purple);
+      letter-spacing: 0.02em;
+      margin-bottom: 1rem;
+      line-height: 1;
+    }
+
+    .about-text h2 span {
+      color: var(--gold);
+    }
+
+    .about-text p {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: #444;
+      margin-bottom: 1rem;
+    }
+
+    .about-text p:last-child {
+      margin-bottom: 0;
+    }
+
+    @media (min-width: 768px) {
+      .about {
+        padding: 5rem 3rem;
+      }
+      .about-inner {
+        grid-template-columns: 1fr 1.2fr;
+      }
+    }
+
+    /* ---- PLATFORM ---- */
+    .platform {
+      background: linear-gradient(160deg, var(--purple-dark) 0%, #2D0F4E 100%);
+      padding: 4rem 1.5rem;
+    }
+
+    .platform-header {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto 3rem;
+    }
+
+    .platform-header h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 3.5rem);
+      color: var(--white);
+      letter-spacing: 0.02em;
+      margin-bottom: 0.75rem;
+      line-height: 1;
+    }
+
+    .platform-header p {
+      font-size: 1.05rem;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    .platform-grid {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .platform-card {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .platform-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--gold);
+    }
+
+    .platform-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--gold);
+    }
+
+    .platform-card .card-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem;
+      color: rgba(255, 184, 0, 0.2);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .platform-card h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+      line-height: 1.1;
+    }
+
+    .platform-card p {
+      font-size: 0.95rem;
+      color: var(--text-light);
+      line-height: 1.65;
+    }
+
+    .platform-card .card-tagline {
+      display: inline-block;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      color: var(--purple-dark);
+      background: var(--gold);
+      padding: 0.25rem 0.75rem;
+      margin-top: 1rem;
+    }
+
+    @media (min-width: 768px) {
+      .platform {
+        padding: 5rem 3rem;
+      }
+      .platform-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* ---- TOWNHALL ---- */
+    .townhall {
+      background: var(--gold);
+      padding: 3rem 1.5rem;
+      text-align: center;
+    }
+
+    .townhall-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .townhall h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      color: var(--purple-dark);
+      letter-spacing: 0.02em;
+      margin-bottom: 0.5rem;
+      line-height: 1;
+    }
+
+    .townhall p {
+      font-size: 1.1rem;
+      color: var(--purple-dark);
+      line-height: 1.5;
+      font-weight: 500;
+    }
+
+    .townhall .townhall-date {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
+      color: var(--purple);
+      margin: 0.75rem 0;
+      letter-spacing: 0.05em;
+    }
+
+    /* ---- VOTE ---- */
+    .vote {
+      background: var(--cream);
+      padding: 4rem 1.5rem;
+      text-align: center;
+    }
+
+    .vote-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .vote h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 7vw, 4rem);
+      color: var(--purple);
+      letter-spacing: 0.02em;
+      margin-bottom: 1rem;
+      line-height: 1;
+    }
+
+    .vote p {
+      font-size: 1.1rem;
+      color: #444;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .vote-dates {
+      display: grid;
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .vote-date-card {
+      background: var(--white);
+      border: 2px solid var(--purple);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .vote-date-card .date-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+      color: var(--purple);
+    }
+
+    .vote-date-card .date-value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      color: var(--purple-dark);
+      line-height: 1;
+    }
+
+    .vote-date-card .date-detail {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .vote-cta {
+      display: inline-block;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.1em;
+      background: var(--purple);
+      color: var(--white);
+      padding: 1rem 3rem;
+      text-decoration: none;
+      margin-top: 1rem;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(107, 47, 160, 0.3);
+    }
+
+    .vote-cta:hover {
+      background: var(--purple-deep);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 30px rgba(107, 47, 160, 0.4);
+    }
+
+    @media (min-width: 768px) {
+      .vote {
+        padding: 5rem 3rem;
+      }
+      .vote-dates {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* ---- FOOTER ---- */
+    .footer {
+      background: var(--purple-dark);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+    }
+
+    .footer-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer p {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.5);
+      line-height: 1.6;
+    }
+
+    .footer-links {
+      margin-top: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+
+    .footer-links a {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text-light);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--gold);
+    }
+
+    /* ---- UTILITIES ---- */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" role="navigation">
+    <a href="#" class="nav-brand">GENESTA CORDERO</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#platform">Platform</a></li>
+      <li><a href="#vote">Vote</a></li>
+    </ul>
+    <a href="#vote" class="nav-cta">VOTE MAR 9&ndash;13</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <p class="hero-label">SAINT PAUL COLLEGE &bull; 2026</p>
+      <h1 class="hero-name">
+        GENESTA
+        <span>CORDERO</span>
+      </h1>
+      <div class="hero-slogan">A STRONGER STUDENT VOICE</div>
+      <p class="hero-office">For Student Senate President</p>
+      <a href="#platform" class="hero-cta">SEE MY PLATFORM &darr;</a>
+    </div>
+  </section>
+
+  <!-- DIVIDER -->
+  <div class="divider divider--purple-to-cream" aria-hidden="true"></div>
+
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <div class="about-inner">
+      <div class="about-photo">
+        <img src="IMG_9365.jpeg" alt="Genesta Cordero at the library" loading="lazy">
+      </div>
+      <div class="about-text">
+        <h2>WHY I'M <span>RUNNING</span></h2>
+        <p>I'm running for Student Senate President because I believe every student deserves meaningful representation in the decisions that shape our academic experience.</p>
+        <p>Right now, too many students feel disconnected from campus governance. That needs to change. I want to bridge that gap through transparent communication, proactive advocacy, and leadership that actually includes you.</p>
+        <p>Effective student government demands active listening, strategic planning, and genuine commitment to our community. I'm ready to show up and do the work.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIVIDER -->
+  <div class="divider divider--cream-to-purple" aria-hidden="true"></div>
+
+  <!-- PLATFORM -->
+  <section class="platform" id="platform">
+    <div class="platform-header">
+      <h2>MY PLATFORM</h2>
+      <p>Three commitments to make student government work for every student at Saint Paul College.</p>
+    </div>
+    <div class="platform-grid">
+
+      <div class="platform-card">
+        <div class="card-number">01</div>
+        <h3>AFFORDABLE &amp; EQUITABLE EDUCATION</h3>
+        <p>I will advocate strongly during tuition and fee consultations to ensure student financial concerns are prioritized. Higher education should be attainable for all students, regardless of economic background.</p>
+        <span class="card-tagline">YOUR VOICE IN TUITION DECISIONS</span>
+      </div>
+
+      <div class="platform-card">
+        <div class="card-number">02</div>
+        <h3>TRANSPARENT &amp; RESPONSIVE GOVERNANCE</h3>
+        <p>I will modernize our outreach through social media, campus events, and direct forums to ensure the Senate is responsive and accessible to the entire student body. No more closed doors.</p>
+        <span class="card-tagline">A SENATE YOU CAN SEE</span>
+      </div>
+
+      <div class="platform-card">
+        <div class="card-number">03</div>
+        <h3>INCLUSIVE LEADERSHIP &amp; OPPORTUNITY</h3>
+        <p>I will strengthen support for student organizations, expand leadership development, and ensure underrepresented voices are actively included in campus decision-making processes.</p>
+        <span class="card-tagline">EVERY STUDENT REPRESENTED</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- DIVIDER -->
+  <div class="divider divider--purple-to-gold" aria-hidden="true"></div>
+
+  <!-- TOWNHALL -->
+  <section class="townhall">
+    <div class="townhall-inner">
+      <h2>COME TO THE CANDIDATE TOWNHALL</h2>
+      <p>Hear from all the candidates. Ask your questions. Make your voice heard.</p>
+      <p class="townhall-date">WEDNESDAY, MARCH 4 &bull; 12:00 &ndash; 1:00 PM</p>
+      <p>General Assembly &mdash; All students welcome</p>
+    </div>
+  </section>
+
+  <!-- DIVIDER -->
+  <div class="divider divider--gold-to-purple" aria-hidden="true"></div>
+
+  <!-- VOTE -->
+  <section class="vote" id="vote">
+    <div class="vote-inner">
+      <h2>MAKE YOUR VOTE COUNT</h2>
+      <p>Together, we can build a Student Senate that truly represents and advocates for all Saint Paul College students.</p>
+
+      <div class="vote-dates">
+        <div class="vote-date-card">
+          <span class="date-label">CAMPAIGNING</span>
+          <span class="date-value">FEB 23 &ndash; MAR 6</span>
+          <span class="date-detail">Learn about your candidates</span>
+        </div>
+        <div class="vote-date-card">
+          <span class="date-label">TOWNHALL</span>
+          <span class="date-value">MARCH 4</span>
+          <span class="date-detail">Wednesday, 12:00 &ndash; 1:00 PM</span>
+        </div>
+        <div class="vote-date-card">
+          <span class="date-label">VOTING</span>
+          <span class="date-value">MAR 9 &ndash; 13</span>
+          <span class="date-detail">Cast your vote for Senate</span>
+        </div>
+      </div>
+
+      <a href="#platform" class="vote-cta">VOTE GENESTA CORDERO</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p class="footer-name">GENESTA CORDERO FOR STUDENT SENATE PRESIDENT</p>
+    <p>Saint Paul College &bull; Saint Paul, MN</p>
+    <div class="footer-links">
+      <a href="#home">HOME</a>
+      <a href="#about">ABOUT</a>
+      <a href="#platform">PLATFORM</a>
+      <a href="#vote">VOTE</a>
+    </div>
+  </footer>
+
+</body>
+</html>
