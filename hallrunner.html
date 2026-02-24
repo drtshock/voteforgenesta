@@ -15,6 +15,10 @@
       font-family: 'DM Sans', sans-serif;
     }
     canvas { display: block; }
+    :focus-visible {
+      outline: 2px solid #FFB800;
+      outline-offset: 2px;
+    }
   </style>
 </head>
 <body>
@@ -153,7 +157,19 @@ C.addEventListener('touchend', e => {
   else swipe = 'tap';
   e.preventDefault();
 }, { passive: false });
-C.addEventListener('click', () => { swipe = 'tap'; });
+C.addEventListener('click', (e) => {
+  // On title/game-over screens, bottom area links to campaign site
+  if (appState === 'title' || appState === 'over') {
+    const rect = C.getBoundingClientRect();
+    const scaleY = H / rect.height;
+    const cy = (e.clientY - rect.top) * scaleY;
+    if (cy > H - 50) {
+      window.open('https://voteforgenesta.com', '_blank', 'noopener');
+      return;
+    }
+  }
+  swipe = 'tap';
+});
 
 // ── Audio ──
 let aud;
@@ -1018,7 +1034,10 @@ function drawTitle() {
   ctx.font="11px 'DM Sans'";
   ctx.fillText('Dodge 🛒🔒🖥️  ·  Jump 🎒⚠️🪑  ·  Slide 🚧🚪🪧  ·  Collect ☕📖⭐', W/2, 524);
 
-  ctx.fillStyle='rgba(255,184,0,0.35)';
+  ctx.fillStyle='rgba(255,184,0,0.55)';
+  ctx.font="13px 'Bebas Neue'";
+  ctx.fillText('\u2190 VOTEFORGENESTA.COM', W/2, H-32);
+  ctx.fillStyle='rgba(255,255,255,0.3)';
   ctx.font="10px 'Bebas Neue'";
   ctx.fillText('A CAMPAIGN MINI-GAME · GENESTA CORDERO FOR STUDENT SENATE PRESIDENT', W/2, H-16);
 }
@@ -1079,9 +1098,12 @@ function drawGameOver() {
   ctx.font="12px 'DM Sans'";
   ctx.fillText(tips[Math.floor(Date.now()/4000) % tips.length], W/2, 548);
 
-  ctx.fillStyle='rgba(255,255,255,0.18)';
+  ctx.fillStyle='rgba(255,184,0,0.55)';
+  ctx.font="13px 'Bebas Neue'";
+  ctx.fillText('\u2190 VOTEFORGENESTA.COM', W/2, H-32);
+  ctx.fillStyle='rgba(255,255,255,0.25)';
   ctx.font="10px 'Bebas Neue'";
-  ctx.fillText('VOTE GENESTA CORDERO · MARCH 9–13 · VOTEFORGENESTA.COM', W/2, H-16);
+  ctx.fillText('VOTE GENESTA CORDERO \u00b7 MARCH 9\u201313 \u00b7 VOTEFORGENESTA.COM', W/2, H-16);
 }
 
 // ══════════════════════════════════════

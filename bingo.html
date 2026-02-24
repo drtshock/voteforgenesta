@@ -306,6 +306,29 @@
       font-weight: 600;
     }
 
+    :focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+    }
+
+    .site-banner {
+      background: var(--purple-dark);
+      text-align: center;
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+    }
+
+    .site-banner a {
+      color: var(--gold);
+      text-decoration: none;
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.06em;
+    }
+
+    .site-banner a:hover {
+      text-decoration: underline;
+    }
+
     /* ---- CONFETTI ---- */
     .confetti-piece {
       position: fixed;
@@ -326,6 +349,11 @@
   </style>
 </head>
 <body>
+
+  <!-- SITE BANNER -->
+  <div class="site-banner">
+    <a href="https://voteforgenesta.com">Vote Genesta Cordero for Student Senate President &rarr; voteforgenesta.com</a>
+  </div>
 
   <!-- HEADER -->
   <div class="header">
